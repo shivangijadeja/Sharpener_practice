@@ -22,9 +22,21 @@ add_items.style.color='green'
 //     items[i].style.fontWeight='bold';
 // }
 
-li=document.getElementsByTagName('li')
-li[2].style.backgroundColor='green'
+// li=document.getElementsByTagName('li')
+// li[2].style.backgroundColor='green'
 
-for(var i=0;i>li.length;i++){
-    li[i].style.fontWeight='bold';
+// for(var i=0;i>li.length;i++){
+//     li[i].style.fontWeight='bold';
+// }
+
+// sec_li=document.querySelector('li:nth-child(2)')
+// sec_li.style.backgroundColor='green'
+// third_li=document.querySelector('li:nth-child(3)')
+// third_li.classList.add('invisible');
+
+var li=document.querySelectorAll('li')
+li[1].style.color='green'
+var odd_li=document.querySelectorAll('li:nth-child(odd)');
+for(var i=0;i<odd_li.length;i++){
+    odd_li[i].style.backgroundColor='green'
 }
