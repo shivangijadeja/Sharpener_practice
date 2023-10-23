@@ -14,3 +14,10 @@ header.style.borderBottom='solid 3px black'
 var add_items=document.querySelector('.title');
 add_items.style.fontWeight='bold'
 add_items.style.color='green'
+
+items=document.getElementsByClassName('list-group-item')
+items[2].style.backgroundColor='green'
+
+for(var i=0;i>items.length;i++){
+    items[i].style.fontWeight='bold';
+}
