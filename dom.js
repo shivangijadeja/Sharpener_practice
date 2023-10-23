@@ -15,9 +15,16 @@ var add_items=document.querySelector('.title');
 add_items.style.fontWeight='bold'
 add_items.style.color='green'
 
-items=document.getElementsByClassName('list-group-item')
-items[2].style.backgroundColor='green'
+// items=document.getElementsByClassName('list-group-item')
+// items[2].style.backgroundColor='green'
 
-for(var i=0;i>items.length;i++){
-    items[i].style.fontWeight='bold';
+// for(var i=0;i>items.length;i++){
+//     items[i].style.fontWeight='bold';
+// }
+
+li=document.getElementsByTagName('li')
+li[2].style.backgroundColor='green'
+
+for(var i=0;i>li.length;i++){
+    li[i].style.fontWeight='bold';
 }
