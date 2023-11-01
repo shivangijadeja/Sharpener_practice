@@ -40,27 +40,31 @@ function storeuser(e){
             'User name':u_name,
             'User email':u_email
         }
+        axios.post('https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata/',
+        {u_name,u_email}).then((res)=>console.log(res))
+          .catch((err)=>console.log(err))
         users.push(user)
-        storeuser_item(users);
+        // storeuser_item(users);
         // localStorage.setItem('User_details',(u_name.concat(':',u_email)));
         // var user_serialize=JSON.stringify(user);
         // localStorage.setItem('User Details',user_serialize)
         // var user_deserilize=JSON.parse(localStorage.getItem('User Details'))
         // console.log(user_deserilize);
-        document.querySelector('.user_name').value='';
-        document.querySelector('.user_email').value='';
+
+        // document.querySelector('.user_name').value='';
+        // document.querySelector('.user_email').value='';
     }
     
 }
-function storeuser_item(users) {
-    for(var i=0;i<users.length;i++){
-        console.log(users[i])
-        serialize_data=JSON.stringify(users[i])
-        deserialize_data=JSON.parse(serialize_data)
-        localStorage.setItem(deserialize_data['User name'], serialize_data )
+// function storeuser_item(users) {
+//     for(var i=0;i<users.length;i++){
+//         console.log(users[i])
+//         serialize_data=JSON.stringify(users[i])
+//         deserialize_data=JSON.parse(serialize_data)
+//         localStorage.setItem(deserialize_data['User name'], serialize_data )
         
-    }
-}
+//     }
+// }
 function removeitem(e){
     var li=e.target.parentElement;
     var selected_name=li.innerText.split('-')[0];
