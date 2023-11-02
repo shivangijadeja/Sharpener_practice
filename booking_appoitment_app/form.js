@@ -94,7 +94,20 @@ function removeitem(e){
     if(e.target.classList.contains('edit_button')){
         document.querySelector('.user_name').value=selected_name;
         document.querySelector('.user_email').value=selected_email;
-        localStorage.removeItem(selected_name);
+        axios.get("https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata")
+            .then((res)=>{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i]['u_name']===selected_name){
+                        id=res.data[i]['_id']
+                    }
+                }
+            }).then(()=>{
+                axios.delete(`https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata/${id}`)
+                .then((res)=>console.log(res))
+                .catch((err)=>console.log(err))
+            }
+            )
+        // localStorage.removeItem(selected_name);
         item_list.removeChild(li);
     }
 }
