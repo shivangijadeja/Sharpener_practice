@@ -70,10 +70,25 @@ function removeitem(e){
     var li=e.target.parentElement;
     var selected_name=li.innerText.split('-')[0];
     var selected_email=(li.innerText.split('-')[1]).split('\n')[0]
+    var id=0
     if(e.target.classList.contains('delete')){
         if(confirm('Are you sure?')){
             item_list.removeChild(li);
-            localStorage.removeItem(selected_name);
+            axios.get("https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata")
+            .then((res)=>{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i]['u_name']===selected_name){
+                        id=res.data[i]['_id']
+                    }
+                }
+            }).then(()=>{
+                axios.delete(`https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata/${id}`)
+                .then((res)=>console.log(res))
+                .catch((err)=>console.log(err))
+            }
+            )
+            
+            // localStorage.removeItem(selected_name);
         }
     }
     if(e.target.classList.contains('edit_button')){
