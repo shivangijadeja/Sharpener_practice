@@ -14,3 +14,16 @@ const student={
     }
 }
 student.greet()
+
+
+const array = ['apple', 'oranges' , ' ', 'mango', ' ' , 'lemon']
+// for(let arr of array){
+    // console.log(arr)
+// }
+let ans=array.map((arr)=>{
+    if(arr===' '){
+        arr='empty string'
+    }
+    return arr
+})
+console.log(ans)
