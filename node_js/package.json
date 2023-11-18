@@ -1,0 +1,16 @@
+{
+  "name": "node_js",
+  "version": "1.0.0",
+  "description": "project for practicing node js",
+  "main": "read_write_msg.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon read_write_msg.js",
+    "start-server": "nodemon app.js"
+  },
+  "author": "Shivangi",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
