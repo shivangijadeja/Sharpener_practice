@@ -2,15 +2,10 @@ const path=require('path')
 const express=require('express')
 const router=express.Router()
 const rootDir=require('../util/path')
+const productController=require('../controllers/products')
 
-router.use('/success',(req,res,next)=>{
-    res.sendFile(path.join(rootDir,'views','success.html'));
-})
+router.use('/success',productController.success)
 
-router.use('/',(req,res,next)=>{
-    res.sendFile(path.join(rootDir,'views','contact_us.html'));
-})
-
-
+router.use('/',productController.contactus)
 
 module.exports=router
