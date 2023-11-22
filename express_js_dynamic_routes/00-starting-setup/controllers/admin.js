@@ -38,6 +38,18 @@ exports.getEditProduct = (req, res, next) => {
   
 };
 
+exports.getDeleteProduct = (req, res, next) => {
+  const proId=req.params.productId;
+  Product.findById(proId,product=>{
+    if(!product){
+      return res.redirect('/');
+    }
+    Product.deleteById(proId)
+    res.redirect('/admin/products')
+  })
+  
+};
+
 exports.postEditProduct=(req,res,next)=>{
   const prodId=req.body.productId;
   const updatedTitle=req.body.title;
