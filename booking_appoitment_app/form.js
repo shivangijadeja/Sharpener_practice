@@ -38,34 +38,37 @@ function storeuser(e){
         item_list.appendChild(create_item);
         
         var user={
-            'User name':u_name,
-            'User email':u_email
+            'user_name':u_name,
+            'user_email':u_email
         }
-        axios.post('https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata/',
-        {u_name,u_email}).then((res)=>console.log(res))
-          .catch((err)=>console.log(err))
+        if(document.querySelector('.btn-submit').classList.contains('update-user')){
+            document.querySelector('.btn-submit').className='btn btn-success btn-submit'
+            const name=document.querySelector('.btn-submit').getAttribute('selected_name')
+            axios.get("http://localhost:3000/admin/get-all-user")
+            .then((res)=>{
+                for(var i=0;i<res.data.users.length;i++){
+                    if(res.data.users[i]['user_name']===name){
+                        id=res.data.users[i]['id']
+                    }
+                }
+            }).then(()=>{
+                axios.put(`http://localhost:3000/admin/update-user/${id}`,user)
+                .then((res)=>console.log(res))
+                .catch((err)=>console.log(err))
+            }
+            )
+            document.querySelector('.btn-submit').removeAttribute('selected_name')
+        }else{
+            axios.post('http://localhost:3000/admin/add-user',
+            user).then((res)=>console.log(res))
+            .catch((err)=>console.log(err))
+        }
+        
         users.push(user)
-        // storeuser_item(users);
-        // localStorage.setItem('User_details',(u_name.concat(':',u_email)));
-        // var user_serialize=JSON.stringify(user);
-        // localStorage.setItem('User Details',user_serialize)
-        // var user_deserilize=JSON.parse(localStorage.getItem('User Details'))
-        // console.log(user_deserilize);
-
-        // document.querySelector('.user_name').value='';
-        // document.querySelector('.user_email').value='';
     }
     
 }
-// function storeuser_item(users) {
-//     for(var i=0;i<users.length;i++){
-//         console.log(users[i])
-//         serialize_data=JSON.stringify(users[i])
-//         deserialize_data=JSON.parse(serialize_data)
-//         localStorage.setItem(deserialize_data['User name'], serialize_data )
-        
-//     }
-// }
+
 function removeitem(e){
     var li=e.target.parentElement;
     var selected_name=li.innerText.split('-')[0];
@@ -74,15 +77,15 @@ function removeitem(e){
     if(e.target.classList.contains('delete')){
         if(confirm('Are you sure?')){
             item_list.removeChild(li);
-            axios.get("https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata")
+            axios.get("http://localhost:3000/admin/get-all-user")
             .then((res)=>{
-                for(var i=0;i<res.data.length;i++){
-                    if(res.data[i]['u_name']===selected_name){
-                        id=res.data[i]['_id']
+                for(var i=0;i<res.data.users.length;i++){
+                    if(res.data.users[i]['user_name']===selected_name){
+                        id=res.data.users[i]['id']
                     }
                 }
             }).then(()=>{
-                axios.delete(`https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata/${id}`)
+                axios.delete(`http://localhost:3000/admin/delete-user/${id}`)
                 .then((res)=>console.log(res))
                 .catch((err)=>console.log(err))
             }
@@ -94,38 +97,26 @@ function removeitem(e){
     if(e.target.classList.contains('edit_button')){
         document.querySelector('.user_name').value=selected_name;
         document.querySelector('.user_email').value=selected_email;
-        axios.get("https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata")
-            .then((res)=>{
-                for(var i=0;i<res.data.length;i++){
-                    if(res.data[i]['u_name']===selected_name){
-                        id=res.data[i]['_id']
-                    }
-                }
-            }).then(()=>{
-                axios.delete(`https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata/${id}`)
-                .then((res)=>console.log(res))
-                .catch((err)=>console.log(err))
-            }
-            )
+        document.querySelector('.btn-submit').className='btn btn-success btn-submit update-user'
+        document.querySelector('.btn-submit').setAttribute('selected_name',selected_name)
         // localStorage.removeItem(selected_name);
         item_list.removeChild(li);
     }
 }
 
 window.onload = (event) => {
-    axios.get("https://crudcrud.com/api/37670e6543cb4ce5bcd6a954d07dd3d8/studentdata")
+    axios.get("http://localhost:3000/admin/get-all-user")
     .then((res)=>{
-        for(var i=0;i<res.data.length;i++){
-            showusers(res.data[i])
+        for(var i=0;i<res.data.users.length;i++){
+            showusers(res.data.users[i])
         }
-        console.log(res.data)
     })
     .catch((err)=>{console.log(err)})
 };
 
 function showusers(user){
-    var u_name=user['u_name'];
-    var u_email=user['u_email'];
+    var u_name=user['user_name'];
+    var u_email=user['user_email'];
     var create_item=document.createElement('li')
     create_item.className='list-group-item'
     var item_text=document.createTextNode(u_name.concat("-", u_email))
