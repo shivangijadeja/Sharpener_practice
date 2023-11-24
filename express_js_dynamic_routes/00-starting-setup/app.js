@@ -78,6 +78,63 @@ app.put('/admin/update-user/:id',updateUser)
 
 // Code end for Booking appoitment app backend
 
+// Code start for Expense app backend
+
+const Expense=require('./models/expense');
+
+const addExpense=(req,res,next)=>{
+    const amount=req.body.expense_amount
+    const des=req.body.expense_description
+    const category=req.body.expense_category
+    Expense.create({
+        amount:amount,
+        description:des,
+        expense_category:category
+    }).then((res)=>console.log(res))
+    .catch((err)=>console.log(err))
+}
+
+const displayExpenses=(req, res, next)=>{
+    Expense.findAll().then((rows)=>{
+        res.status(200).json({expenses:rows})
+    }).catch((err)=>{
+        console.log(err)
+    })
+}
+
+const deleteExpense=(req,res,next)=>{
+    const id=req.params.id
+    Expense.destroy({where:{id:id}})
+    .then(()=>{
+    res.redirect('/')
+  }).catch((err)=>console.log(err))
+}
+
+const updateExpense=(req,res,next)=>{
+    const id=req.params.id
+    const amount=req.body.expense_amount
+    const des=req.body.expense_description
+    const category=req.body.expense_category
+    Expense.update({
+        amount:amount,
+        description:des,
+        expense_category:category
+    },{
+        where:{id:id}
+    })
+
+}
+
+app.post('/add-expense',addExpense)
+
+app.get('/display-expense',displayExpenses)
+
+app.delete('/delete-expense/:id',deleteExpense)
+
+app.put('/update-expense/:id',updateExpense)
+
+// Code end for Expense app backend
+
 app.use(errorController.get404);
 
 sequelize.sync().then(res=>{

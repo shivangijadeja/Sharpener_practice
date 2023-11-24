@@ -36,43 +36,108 @@ function addexpense(e){
         item_list.appendChild(create_item);
 
         var expense={
-            'Expense Amount':input_value,
-            'Expense Description':des_val,
-            'Expense Category':category_val
+            'expense_amount':input_value,
+            'expense_description':des_val,
+            'expense_category':category_val
         }
         expenses.push(expense)
-        store_expense_item(expenses);
 
+        if(document.querySelector('.btn-submit').classList.contains('update-expense')){
+            document.querySelector('.btn-submit').className='btn btn-dark btn-submit'
+            const sel_des=document.querySelector('.btn-submit').getAttribute('selected_expense')
+            axios.get("http://localhost:3000/display-expense/")
+            .then((res)=>{
+                for(var i=0;i<res.data.expenses.length;i++){
+                    if(res.data.expenses[i]['description']===sel_des){
+                        id=res.data.expenses[i]['id']
+                    }
+                }
+            }).then(()=>{
+                axios.put(`http://localhost:3000/update-expense/${id}`,expense)
+                .then((res)=>console.log(res))
+                .catch((err)=>console.log(err))
+            })
+
+        }
+        else{
+            axios.post('http://localhost:3000/add-expense',expense)
+            .then((res)=>console.log(res))
+            .catch((err)=>console.log(err))
+        }
+        
         document.querySelector('#amount').value=''
         document.querySelector('#description').value=''
-        document.querySelector('#category').value=''
+        document.querySelector('#category').value='travelling'
     }
 }
 
-function store_expense_item(expenses) {
-    for(var i=0;i<expenses.length;i++){
-        serialize_data=JSON.stringify(expenses[i])
-        deserialize_data=JSON.parse(serialize_data)
-        localStorage.setItem(deserialize_data['Expense Description'], serialize_data )   
-    }
+window.onload = (event) => {
+    axios.get("http://localhost:3000/display-expense")
+    .then((res)=>{
+        for(var i=0;i<res.data.expenses.length;i++){
+            showexpenses(res.data.expenses[i])
+        }
+    })
+    .catch((err)=>{console.log(err)})
+};
+
+function showexpenses(expense){
+    var amount=expense['amount']
+    var des=expense['description']
+    var ex_category=expense['expense_category']
+
+    var create_item=document.createElement('li')
+    create_item.className='list-group-item'
+    var display_text=String(amount).concat("-",des,"-",ex_category)
+    var item_text=document.createTextNode(display_text)
+    create_item.appendChild(item_text);
+
+    var btn_del=document.createElement('button');
+    btn_del.className='btn btn-danger btn-sm float-right delete mr-2';
+    var btn_text=document.createTextNode('DELETE');
+    btn_del.appendChild(btn_text)
+    create_item.appendChild(btn_del)
+
+    var btn_edit=document.createElement('button');
+    btn_edit.className='btn btn-info btn-sm float-right mr-2 edit'
+    var btn_edit_text=document.createTextNode('EDIT');
+    btn_edit.appendChild(btn_edit_text);
+    create_item.appendChild(btn_edit)
+
+    item_list.appendChild(create_item);
+
 }
 
 function remove_expense(e){
     var li=e.target.parentElement;
-    var selected_amt=li.innerText.split(' ')[0];
-    var selected_des=li.innerText.split(' ')[1];
-    var selected_category=li.innerText.split(' ')[2];
+    var selected_amt=li.innerText.split('-')[0];
+    var selected_des=li.innerText.split('-')[1];
+    var selected_category=li.innerText.split('-')[2].split('\n')[0];
+    var id=0
     if(e.target.classList.contains('delete')){
         if(confirm('Are you sure?')){
             item_list.removeChild(li);
-            localStorage.removeItem(selected_des);
+            axios.get("http://localhost:3000/display-expense/")
+            .then((res)=>{
+                for(var i=0;i<res.data.expenses.length;i++){
+                    if(res.data.expenses[i]['description']===selected_des){
+                        id=res.data.expenses[i]['id']
+                    }
+                }
+            }).then(()=>{
+                axios.delete(`http://localhost:3000/delete-expense/${id}`)
+                .then((res)=>console.log(res))
+                .catch((err)=>console.log(err))
+            }
+            )
         }
     }
     if(e.target.classList.contains('edit')){
         document.querySelector('#amount').value=selected_amt;
         document.querySelector('#description').value=selected_des;
         document.querySelector('#category').value=selected_category;
-        localStorage.removeItem(selected_des);
+        document.querySelector('.btn-submit').className='btn btn-dark btn-submit update-expense'
+        document.querySelector('.btn-submit').setAttribute('selected_expense',selected_des)
         item_list.removeChild(li);
     }
 }
