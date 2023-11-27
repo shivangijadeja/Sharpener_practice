@@ -30,6 +30,8 @@ app.use((req,res,next)=>{
 })
 
 const Product=require('./models/product')
+const Cart=require('./models/cart')
+const CartItem=require('./models/cart-item')
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -154,6 +156,10 @@ app.use(errorController.get404);
 Product.belongsTo(User,{constraints:true,onDelete:'CASCADE'})
 
 User.hasMany(Product)
+User.hasOne(Cart)
+Cart.belongsTo(User)
+Cart.belongsToMany(Product,{through:CartItem});
+Product.belongsToMany(Cart,{through:CartItem})
 
 sequelize
 // .sync({force:true})
@@ -171,6 +177,9 @@ sequelize
     return Promise.resolve(user);
 })
 .then(user=>{
+    return user.createCart();
+})
+.then(cart=>{
     // console.log(user)
     app.listen(3000);
 })
