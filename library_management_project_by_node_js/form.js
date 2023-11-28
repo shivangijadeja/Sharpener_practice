@@ -25,13 +25,38 @@ function addbook(e){
         axios.post('http://localhost:9999/add-book',
             book).then((res)=>console.log(res))
             .catch((err)=>console.log(err))
+        
+        var name=name;
+        var taken_on=new Date();
+        var return_on=new Date(Date.now() + 1 * (60 * 60 * 1000) );
+        var book_fine=0
+        var create_item=document.createElement('li')
+        create_item.innerHTML=`
+        <h6>Book Name: ${name}</h6>
+        <h6>Book taken on: ${taken_on}</h6>
+        <h6>Book return on: ${return_on}</h6>
+        <h6>Book fine: ${book_fine}</h6>
+        `
+        create_item.className='list-group-item'
+        var btn_edit=document.createElement('button');
+        var btn_pay=document.createElement('button');
+        var add_text=document.createTextNode('Return Book')
+        var pay_text=document.createTextNode('Pay fine');
+        btn_edit.appendChild(add_text)
+        btn_pay.appendChild(pay_text)
+        btn_edit.className='btn btn-info btn-sm mr-2 float-right icon-check-sign done'
+        btn_pay.className='btn btn-danger btn-sm mr-2 float-right icon-check-sign invisible pay_fine'
+        create_item.appendChild(btn_pay)
+        create_item.appendChild(btn_edit)
+        item_list.appendChild(create_item)
     }
 }
 
 function returnBook(e){
     var li=e.target.parentElement;
-    var selected_name=li.innerText.split('-')[0];
+    var selected_name=li.innerText.split('\n')[0].split(':')[1];
     var id=0
+    var displayed_fine=0
     const book={
         "name":selected_name,
         "is_return":true
@@ -41,6 +66,52 @@ function returnBook(e){
             for(var i=0;i<res.data.books.length;i++){
                 if(res.data.books[i]['name']==selected_name.trim()){
                     id=res.data.books[i]['id']
+                    displayed_fine=res.data.books[i]['book_fine']
+                }
+            }
+        })
+        .then(()=>{
+            if(displayed_fine>0){
+                var btn_add=li.querySelector('.done')
+                li.removeChild(btn_add)
+                var pay_fine=li.querySelector('.pay_fine')
+                pay_fine.classList='btn btn-danger btn-sm mr-2 float-right icon-check-sign pay_fine'
+                li.appendChild(pay_fine)
+            }
+            else{
+                axios.get('http://localhost:9999/get-all-books').then((res)=>{
+                    for(var i=0;i<res.data.books.length;i++){
+                        if(res.data.books[i]['name']==selected_name.trim()){
+                            id=res.data.books[i]['id']
+                            displayed_fine=res.data.books[i]['book_fine']
+                        }
+                    }
+                })
+                .then(()=>{
+                    axios.put(`http://localhost:9999/update-product/${id}`,book).then((res)=>{
+                    console.log(res)
+                    }).catch((er)=>{
+                        console.log(er)
+                    })
+                })
+                .catch((er)=>{
+                    console.log(er)
+                })
+
+                item_list.removeChild(li);
+                var btn_add=li.querySelector('.done')
+                li.removeChild(btn_add)
+                done_item_list.appendChild(li);
+
+            }
+        })
+    }
+    if(e.target.classList.contains('pay_fine')){
+        axios.get('http://localhost:9999/get-all-books').then((res)=>{
+            for(var i=0;i<res.data.books.length;i++){
+                if(res.data.books[i]['name']==selected_name.trim()){
+                    id=res.data.books[i]['id']
+                    displayed_fine=res.data.books[i]['book_fine']
                 }
             }
         })
@@ -54,12 +125,13 @@ function returnBook(e){
         .catch((er)=>{
             console.log(er)
         })
-        
+
+        item_list.removeChild(li);
+        var btn_add=li.querySelector('.pay_fine')
+        li.removeChild(btn_add)
+        done_item_list.appendChild(li); 
     }
-    item_list.removeChild(li);
-    var btn_add=li.querySelector('.done')
-    li.removeChild(btn_add)
-    done_item_list.appendChild(li); 
+    
 }
 
 
@@ -87,17 +159,26 @@ function show_books(book){
     var is_return=book['is_return'];
     var book_fine=book['book_fine']
     var create_item=document.createElement('li')
+    create_item.innerHTML=`
+    <h6>Book Name: ${name}</h6>
+    <h6>Book taken on: ${taken_on}</h6>
+    <h6>Book return on: ${return_on}</h6>
+    <h6>Book fine: ${book_fine}</h6>
+    `
     create_item.className='list-group-item'
-    var item_text=document.createTextNode(name.concat(" - ", taken_on," - ",return_on," - ",book_fine))
-    create_item.appendChild(item_text);
 
     
         
     if(is_return===false){
         var btn_edit=document.createElement('button');
+        var btn_pay=document.createElement('button');
         var add_text=document.createTextNode('Return Book')
+        var pay_text=document.createTextNode('Pay fine');
         btn_edit.appendChild(add_text)
+        btn_pay.appendChild(pay_text)
         btn_edit.className='btn btn-info btn-sm mr-2 float-right icon-check-sign done'
+        btn_pay.className='btn btn-danger btn-sm mr-2 float-right icon-check-sign invisible pay_fine'
+        create_item.appendChild(btn_pay)
         create_item.appendChild(btn_edit)
 
         item_list.appendChild(create_item);
