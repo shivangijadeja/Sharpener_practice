@@ -27,32 +27,28 @@
             </div>
         </nav>
     </header>
-    <form action="" method="post">
+    <form action="" method="post" class="login_form">
         <div class="imgcontainer">
           <img src="./img_avatar2.png" alt="Avatar" class="avatar w3-circle w3-margin-top" style="width:270px; height: 270px;">
         </div>
       
         <div class="container">
-          <label for="uname"><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" name="uname" required>
+          <label for="email"><b>User Email</b></label>
+          <input type="email" placeholder="Enter User Email" name="email" class="u_email" required>
       
           <label for="psw"><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" name="psw" required>
+          <input type="password" placeholder="Enter Password" name="psw" class="u_pwd" required>
+
+          <label><b>New user </b></label>
+          <a href="./sign_up.html">Sign Up</a>
       
           <button type="submit">Login</button>
-          <label>
-            <input type="checkbox" checked="checked" name="remember"> Remember me
-          </label>
-        </div>
-      
-        <div class="container" style="background-color:#f1f1f1">
-          <button type="button" class="cancelbtn">Cancel</button>
-          <span class="psw">Forgot <a href="#">password?</a></span>
+          <input type="text" name="message" id="error_msg" class="invisible">
+          
         </div>
       </form>
-      
 
-    
-    
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script src="login.js"></script>
 </html>
