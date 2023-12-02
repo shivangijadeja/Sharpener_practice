@@ -34,16 +34,17 @@ function loginUser(e){
                 }
             }
         }).then(()=>{
-            if(user_exist){
-                axios.post('http://localhost:8000/user/login',user)
-                .then((res)=>console.log(res))
-                .catch((err)=>console.log(err))
-                alert("user logged in successfully")
-            }
+            axios.post('http://localhost:8000/user/login',user)
+            .then((res)=>console.log(res))
+            .catch((err)=>console.log(err))
         })    
         }
         else{
-            console.error("User doesn't exits")
+            axios.post('http://localhost:8000/user/login',user)
+            .then((res)=>console.log(res))
+            .catch((err)=>console.log(err))
+
+            document.querySelector('#error_msg').classList="invisible"
         }
     })
     .catch((err)=>console.log(err))

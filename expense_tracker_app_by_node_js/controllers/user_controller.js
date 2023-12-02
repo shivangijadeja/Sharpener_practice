@@ -17,7 +17,25 @@ const getAllUser=(req,res)=>{
     })
 }
 
+const testUser=async (req,res)=>{
+    const email = req.body.email;
+    const pwd=req.body.password;
+    const result=await db.execute(`select * from user where email='${email}'`)
+    if(result[0].length>0){
+        if(result[0][0].password===pwd){
+            res.status(200).send("User login succesfully");
+        }
+        else{
+            res.status(401).send("User not authorised");
+        }
+    }
+    else{
+        res.status(404).send("User not found");
+    }
+}
+
 module.exports={
     addUser,
-    getAllUser
+    getAllUser,
+    testUser,
 }
