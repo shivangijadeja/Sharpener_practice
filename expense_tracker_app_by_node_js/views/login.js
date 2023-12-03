@@ -35,14 +35,19 @@ function loginUser(e){
             }
         }).then(()=>{
             axios.post('http://localhost:8000/user/login',user)
-            .then((res)=>console.log(res))
+            .then((res)=>{
+                window.location.href = "file:///D:/Shivangi/sharpener/Sharpener_practice/expense_tracker_app_by_node_js/views/expense.html"
+            })
             .catch((err)=>console.log(err))
         })    
         }
         else{
             axios.post('http://localhost:8000/user/login',user)
-            .then((res)=>console.log(res))
+            .then((res)=>{
+                window.location.href = "file:///D:/Shivangi/sharpener/Sharpener_practice/expense_tracker_app_by_node_js/views/expense.html"
+            })
             .catch((err)=>console.log(err))
+                    
 
             document.querySelector('#error_msg').classList="invisible"
         }

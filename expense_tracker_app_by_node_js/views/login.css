@@ -4,7 +4,7 @@ form {
   }
   
   /* Full-width inputs */
-  input[type=text], input[type=password],input[type=email] {
+  input[type=text], input[type=password],input[type=email], input[type=number],select {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -22,6 +22,14 @@ form {
     border: none;
     cursor: pointer;
     width: 100%;
+  }
+
+  .delete{
+    background-color: #f00b0b !important;
+    width:10% !important;
+    height: 30px;
+    padding: 0px !important;
+    margin: 0px !important;
   }
 
   .navbar{

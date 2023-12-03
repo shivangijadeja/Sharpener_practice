@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="./login.css">
+    <title>Expense page</title>
+</head>
+<body>
+    <form action="" method="POST" id="addForm">
+        <div class="container">
+            <label for="amount"><b>Expense amount</b></label>
+            <input type="number" placeholder="Enter amount" name="amount" class="amount" required>
+        
+            <label for="des"><b>Description</b></label>
+            <input type="text" placeholder="Enter Description" name="des" class="des" required>
+
+            <label for="category"><b>Expense category</b></label>
+            <select name="category" id="category">
+                <option value="Rent">Rent</option>
+                <option value="House expense">House expense</option>
+                <option value="Movies">Movies</option>
+                <option value="Travelling">Travelling</option>
+              </select>
+        
+            <button type="submit">Add Expense</button>
+
+            <ul id="expense_list">
+            </ul>
+            
+          </div>
+        </form>
+    </form>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script src="expense.js"></script>
+</html>
