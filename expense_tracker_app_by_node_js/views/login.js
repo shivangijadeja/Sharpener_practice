@@ -36,6 +36,7 @@ function loginUser(e){
         }).then(()=>{
             axios.post('http://localhost:8000/user/login',user)
             .then((res)=>{
+                localStorage.setItem('token',res.data.token)
                 window.location.href = "file:///D:/Shivangi/sharpener/Sharpener_practice/expense_tracker_app_by_node_js/views/expense.html"
             })
             .catch((err)=>console.log(err))

@@ -1,11 +1,12 @@
-expense_controller=require('../controllers/expense_controller');
+const expense_controller=require('../controllers/expense_controller');
+const auth=require('../middleware/auth')
 
 const router=require('express').Router()
 
-router.post('/expense/add-expense',expense_controller.addExpense)
-router.get('/expense/display-expense',expense_controller.getAllExpense)
+router.post('/expense/add-expense',auth.authenticate,expense_controller.addExpense)
 
-// router.post('/user/login',user_controller.testUser)
-// 
+router.get('/expense/display-expense',auth.authenticate,expense_controller.getAllExpense)
+
+router.delete('/expense/delete-expense/:id',expense_controller.deleteExpense)
 
 module.exports=router

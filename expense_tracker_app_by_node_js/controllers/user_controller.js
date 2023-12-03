@@ -1,5 +1,6 @@
 const db=require('../utils/database')
 const bcrypt=require('bcrypt'); 
+const jwt=require('jsonwebtoken')
 
 const addUser=(req,res)=>{
     try{
@@ -24,6 +25,10 @@ const getAllUser=(req,res)=>{
     })
 }
 
+function generateAccessToken(id){
+    return jwt.sign({user_id:id},'secretkey')
+}
+
 const testUser=async (req,res)=>{
     const email = req.body.email;
     const pwd=req.body.password;
@@ -34,7 +39,7 @@ const testUser=async (req,res)=>{
                 res.status(500).send("Something went wrong")
             }
             if(response==true){
-                res.status(200).send("User login succesfully");
+                res.status(200).json({message:"User login succesfully",token:generateAccessToken(result[0][0].id)});
             }
             else{
                 res.status(401).send("User not authorised");

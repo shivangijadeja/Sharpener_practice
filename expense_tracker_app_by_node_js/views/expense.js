@@ -3,6 +3,8 @@ var item_list=document.getElementById('expense_list');
 
 my_form.addEventListener('submit',addexpense);
 
+item_list.addEventListener('click',remove_expense);
+
 function addexpense(e){
     e.preventDefault();
     var input_value=document.querySelector('.amount').value;
@@ -21,6 +23,7 @@ function addexpense(e){
     create_item.appendChild(btn_del)
 
     item_list.appendChild(create_item);
+    const token=localStorage.getItem('token')
 
     var expense={
         'amount':input_value,
@@ -28,14 +31,15 @@ function addexpense(e){
         'category':category_val
     }
 
-    axios.post('http://localhost:8000/expense/add-expense',expense)
+    axios.post('http://localhost:8000/expense/add-expense',expense,{headers:{'Authorization':token}})
                 .then((res)=>console.log(res))
                 .catch((err)=>console.log(err))
 
 }
 
 window.onload = (event) => {
-    axios.get("http://localhost:8000/expense/display-expense")
+    const token=localStorage.getItem('token')
+    axios.get("http://localhost:8000/expense/display-expense",{headers:{'Authorization':token}})
     .then((res)=>{
         for(var i=0;i<res.data.expenses[0].length;i++){
             showexpenses(res.data.expenses[0][i])
@@ -63,4 +67,35 @@ function showexpenses(expense){
 
     item_list.appendChild(create_item);
 
+}
+
+function remove_expense(e){
+    var li=e.target.parentElement;
+    var selected_amt=li.innerText.split('==>')[0];
+    var selected_des=li.innerText.split('==>')[1];
+    var selected_category=li.innerText.split('==>')[2].split('\n')[0];
+    var id=0
+    const token=localStorage.getItem('token')
+    if(e.target.classList.contains('delete')){
+        if(confirm('Are you sure?')){
+            console.log(selected_amt,selected_des,selected_category)
+            item_list.removeChild(li);
+            axios.get("http://localhost:8000/expense/display-expense",{headers:{'Authorization':token}})
+            .then((res)=>{
+                for(var i=0;i<res.data.expenses[0].length;i++){
+                    if(res.data.expenses[0][i]['description']===selected_des &&
+                    res.data.expenses[0][i]['amount']==selected_amt && 
+                    res.data.expenses[0][i]['category']===selected_category){
+                        id=res.data.expenses[0][i]['id']
+                    }
+                }
+            })
+            .then(()=>{
+                axios.delete(`http://localhost:8000/expense/delete-expense/${id}`)
+                .then((res)=>console.log(res))
+                .catch((err)=>console.log(err))
+            }
+            )
+        }
+    }
 }
