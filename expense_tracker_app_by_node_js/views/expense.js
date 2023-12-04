@@ -39,6 +39,12 @@ function addexpense(e){
 
 window.onload = (event) => {
     const token=localStorage.getItem('token')
+    const decoded_token=parseJwt(token)
+    console.log(decoded_token)
+    const is_premium_user=decoded_token.is_premium_user
+    if(is_premium_user==1){
+        showPremiumMessage()
+    }
     axios.get("http://localhost:8000/expense/display-expense",{headers:{'Authorization':token}})
     .then((res)=>{
         for(var i=0;i<res.data.expenses[0].length;i++){
@@ -47,6 +53,21 @@ window.onload = (event) => {
     })
     .catch((err)=>{console.log(err)})
 };
+
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+}
+
+function showPremiumMessage(){
+    document.querySelector('#rzp-button').classList="invisible"
+    document.querySelector('.premium_text').classList="float-right premium_text"
+}
 
 function showexpenses(expense){
     var amount=expense['amount']
@@ -111,7 +132,8 @@ document.getElementById('rzp-button').onclick= async function(e){
             await axios.post('http://localhost:8000/purchase/updatetransactionstatus',{
                 order_id:options.order_id,
                 payment_id:response.razorpay_payment_id,               
-            },{headers:{'Authorization':token}})
+            },{headers:{'Authorization':token,'is_premium_user':true}})
+            showPremiumMessage()
 
             alert('You are premium user now!!!')
         }

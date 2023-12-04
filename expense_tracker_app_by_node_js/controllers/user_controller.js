@@ -25,8 +25,8 @@ const getAllUser=(req,res)=>{
     })
 }
 
-function generateAccessToken(id){
-    return jwt.sign({user_id:id},'secretkey')
+function generateAccessToken(id,is_premium_user){
+    return jwt.sign({user_id:id,is_premium_user},'secretkey')
 }
 
 const testUser=async (req,res)=>{
@@ -39,7 +39,7 @@ const testUser=async (req,res)=>{
                 res.status(500).send("Something went wrong")
             }
             if(response==true){
-                res.status(200).json({message:"User login succesfully",token:generateAccessToken(result[0][0].id)});
+                res.status(200).json({message:"User login succesfully",token:generateAccessToken(result[0][0].id,result[0][0].is_preminum_user)});
             }
             else{
                 res.status(401).send("User not authorised");
