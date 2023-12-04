@@ -25,8 +25,32 @@ const purchasePremium=async(req,res)=>{
     }
 }
 
+const updateTransactionStatus=async (req,res)=>{
+    try{
+        const {payment_id,order_id}=req.body
+        db.execute(`select * from expense_tracker_app.order where orderid='${order_id}'`).then(
+            res_order=>{
+                db.execute(`update expense_tracker_app.order set paymentid='${payment_id}', status='SUCCESSFULL' where id=${res_order[0][0].id}`)
+                .then(()=>{
+                    db.execute(`update expense_tracker_app.user set is_preminum_user=true where id=${req.user}`).then(()=>{
+                        return res.status(202).json({succes:true,message:"transaction successfully done"})
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                }).catch((err)=>{
+                    console.log(err)
+                })
+            }
+        )
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 
 
 module.exports={
-    purchasePremium   
+    purchasePremium,
+    updateTransactionStatus
 }

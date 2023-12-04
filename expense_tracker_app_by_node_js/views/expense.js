@@ -106,8 +106,8 @@ document.getElementById('rzp-button').onclick= async function(e){
     {headers:{'Authorization':token}})
     var options={
         "key":response.data.key_id,
-        "order_id":response.data.order_id,
-        "header":async function(response){
+        "order_id":response.data.order.id,
+        "handler":async function(response){
             await axios.post('http://localhost:8000/purchase/updatetransactionstatus',{
                 order_id:options.order_id,
                 payment_id:response.razorpay_payment_id,               
@@ -116,4 +116,12 @@ document.getElementById('rzp-button').onclick= async function(e){
             alert('You are premium user now!!!')
         }
     }
+    const rzp1=new Razorpay(options)
+    rzp1.open();
+    e.preventDefault();
+
+    rzp1.on('payment.failed',function(response){
+        console.log(response)
+        alert('something went wrong')
+    })
 }

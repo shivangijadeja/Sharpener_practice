@@ -5,6 +5,6 @@ const router=require('express').Router()
 
 router.get('/purchase/premiummembership',auth.authenticate,purchase_controller.purchasePremium)
 
-// router.post('/purchase/updatetransactionstatus',auth.authenticate,purchase_controller.updateTransactionStatus)
+router.post('/purchase/updatetransactionstatus',auth.authenticate,purchase_controller.updateTransactionStatus)
 
 module.exports=router
