@@ -99,3 +99,21 @@ function remove_expense(e){
         }
     }
 }
+
+document.getElementById('rzp-button').onclick= async function(e){
+    const token=localStorage.getItem('token')
+    const response=await axios.get('http://localhost:8000/purchase/premiummembership',
+    {headers:{'Authorization':token}})
+    var options={
+        "key":response.data.key_id,
+        "order_id":response.data.order_id,
+        "header":async function(response){
+            await axios.post('http://localhost:8000/purchase/updatetransactionstatus',{
+                order_id:options.order_id,
+                payment_id:response.razorpay_payment_id,               
+            },{headers:{'Authorization':token}})
+
+            alert('You are premium user now!!!')
+        }
+    }
+}
