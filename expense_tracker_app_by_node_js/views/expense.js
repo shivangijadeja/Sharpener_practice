@@ -1,5 +1,6 @@
 var my_form=document.querySelector('#addForm');
 var item_list=document.getElementById('expense_list');
+var leader_board_list=document.getElementById('leaderBoard_list');
 
 my_form.addEventListener('submit',addexpense);
 
@@ -67,6 +68,7 @@ function parseJwt (token) {
 function showPremiumMessage(){
     document.querySelector('#rzp-button').classList="invisible"
     document.querySelector('.premium_text').classList="float-right premium_text"
+    document.querySelector('.leaderboard').classList='leaderboard float-left'
 }
 
 function showexpenses(expense){
@@ -146,4 +148,34 @@ document.getElementById('rzp-button').onclick= async function(e){
         console.log(response)
         alert('something went wrong')
     })
+}
+
+
+document.querySelector('.leaderboard').onclick=()=>{
+    axios.get("http://localhost:8000/expense/show-leaderboard").then((res)=>{
+        var text=document.createElement('h4')
+        const item_text=document.createTextNode("Leader board")
+        text.style='text-align:center'
+        text.appendChild(item_text)
+        leader_board_list.appendChild(text)
+        for(let i=0;i<res.data.expenses[0].length;i++){
+            show_leaderboard(res.data.expenses[0][i])
+        }
+    }).catch((err)=>{
+        console.log(err)
+    })
+}
+
+function show_leaderboard(expense){
+    let user_name=expense.user_name
+    var total_expense=expense.total_expense
+
+    var create_item=document.createElement('li')
+    
+    create_item.className='list-group-item'
+    var display_text=String('').concat(" Name:",user_name," Total Expense:",total_expense)
+    var item_text=document.createTextNode(display_text)
+    create_item.appendChild(item_text);   
+
+    leader_board_list.appendChild(create_item)
 }

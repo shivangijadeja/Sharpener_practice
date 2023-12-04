@@ -22,8 +22,18 @@ const deleteExpense=(req,res)=>{
     })
 }
 
+const showLeaderboard=(req,res)=>{
+    db.execute('select u.user_name,sum(e.amount) as total_expense from expense_tracker_app.expense e, expense_tracker_app.user u where e.user_id=u.id group by e.user_id order by sum(e.amount) desc;')
+    .then((result)=>{
+        res.status(200).json({expenses:result})
+    }).catch((err)=>{
+        console.log(err)
+    })
+}
+
 module.exports={
     addExpense,
     getAllExpense,
     deleteExpense,
+    showLeaderboard,
 }

@@ -9,4 +9,6 @@ router.get('/expense/display-expense',auth.authenticate,expense_controller.getAl
 
 router.delete('/expense/delete-expense/:id',expense_controller.deleteExpense)
 
+router.get('/expense/show-leaderboard',expense_controller.showLeaderboard)
+
 module.exports=router
