@@ -7,7 +7,7 @@ router.post('/expense/add-expense',auth.authenticate,expense_controller.addExpen
 
 router.get('/expense/display-expense',auth.authenticate,expense_controller.getAllExpense)
 
-router.delete('/expense/delete-expense/:id',expense_controller.deleteExpense)
+router.delete('/expense/delete-expense/:id',auth.authenticate,expense_controller.deleteExpense)
 
 router.get('/expense/show-leaderboard',expense_controller.showLeaderboard)
 

@@ -22,7 +22,15 @@ const getAllExpense=(req,res)=>{
 }
 
 const deleteExpense=(req,res)=>{
-    db.execute(`Delete FROM EXPENSE where id=${req.params.id}`).then((result)=>{
+    const user_id=req.user
+    const amount=req.header('amount')
+    db.execute(`select total_expense from user where id=${user_id}`).then((total_expense)=>{
+        const previous_expense=total_expense[0][0].total_expense
+        db.execute(`update user set total_expense=${previous_expense}-${amount} where id=${user_id}`)
+    })
+    db.execute(`Delete FROM EXPENSE where id=${req.params.id}`)
+    
+    .then((result)=>{
         res.status(200).json({expenses:result})
     })
 }

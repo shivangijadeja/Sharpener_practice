@@ -114,7 +114,7 @@ function remove_expense(e){
                 }
             })
             .then(()=>{
-                axios.delete(`http://localhost:8000/expense/delete-expense/${id}`)
+                axios.delete(`http://localhost:8000/expense/delete-expense/${id}`,{headers:{'Authorization':token,'amount':selected_amt}})
                 .then((res)=>console.log(res))
                 .catch((err)=>console.log(err))
             }
