@@ -179,3 +179,27 @@ function show_leaderboard(expense){
 
     leader_board_list.appendChild(create_item)
 }
+
+document.getElementById("download_expenses").addEventListener("click", function(){
+    axios.get("http://localhost:8000/expense/get-history-data",{headers:{'Authorization':token}})
+    .then((data)=>{
+        console.log(data)
+    })
+
+    var filename = "hello.html";
+    
+    download(filename, text);
+}, false);
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
