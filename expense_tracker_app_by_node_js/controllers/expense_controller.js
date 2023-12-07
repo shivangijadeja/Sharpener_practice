@@ -1,4 +1,7 @@
 const db=require('../utils/database')
+const dotenv = require('dotenv');
+dotenv.config();
+const AWS = require('aws-sdk');
 
 const addExpense=(req,res)=>{
 
@@ -45,9 +48,71 @@ const showLeaderboard=(req,res)=>{
     })
 }
 
+const getHistoryData=async (req,res)=>{
+    const user_id=req.user
+    try{
+        const data=await db.execute(`SELECT * FROM expense_tracker_app.expense where user_id=${user_id}`)
+        if(data){
+            res.status(200).json({expenses:data})
+        }
+    }
+    catch{
+        res.status(401).json({message:'Unable to fetch history'})
+    }
+    
+
+}
+
+const uploadToS3 = async (data, filename) => {
+    try {
+        const bucketName = process.env.BUCKET_NAME;
+        const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+        const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+        const s3 = new AWS.S3({
+            accessKeyId,
+            secretAccessKey,
+        });
+        const uploadParams = {
+            Bucket: bucketName,
+            Key: filename,
+            Body: data,
+            ACL: 'public-read',
+        };
+        const uploadResponse = await s3.upload(uploadParams).promise();
+        return uploadResponse.Location;
+    } catch (error) {
+        console.error('Error uploading file to S3:', error);
+        throw error;
+    }
+}
+
+const getDownloadURL = async (request, response, next) => {
+    try {
+      const user = request.user;
+      const expenses=await db.execute(`select * from expense where user_id=${user}`)
+      const formattedExpenses = expenses[0].map(expense => {
+        return `Category: ${expense.category}
+                Amount: ${expense.amount}
+                Date: ${expense.created_at}
+                `;
+      });
+      const textData = formattedExpenses.join("\n");
+      const filename = `expense-data/user${user}/${new Date()}.txt`;
+      const URL = await uploadToS3(textData, filename);
+      const createDl=await db.execute('INSERT INTO DOWNLOAD (downloadUrl,user_id) VALUES (?,?)' , [URL,user])
+
+      response.status(200).json({URL,success:true});
+    } catch (error) {
+      console.log("Error while creating download link: " + error);
+      response.status(500).json({ message: "Unable to generate URL" });
+    }
+};
+
 module.exports={
     addExpense,
     getAllExpense,
     deleteExpense,
     showLeaderboard,
+    getDownloadURL,
+    getHistoryData,
 }

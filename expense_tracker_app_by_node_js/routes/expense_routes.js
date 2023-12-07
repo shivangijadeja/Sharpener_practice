@@ -11,4 +11,8 @@ router.delete('/expense/delete-expense/:id',auth.authenticate,expense_controller
 
 router.get('/expense/show-leaderboard',expense_controller.showLeaderboard)
 
+router.get('/expense/get-history-data',auth.authenticate,expense_controller.getHistoryData)
+
+router.get('/expense/download',auth.authenticate,expense_controller.getDownloadURL);
+
 module.exports=router

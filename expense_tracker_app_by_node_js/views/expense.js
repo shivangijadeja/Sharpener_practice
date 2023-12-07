@@ -1,6 +1,7 @@
 var my_form=document.querySelector('#addForm');
 var item_list=document.getElementById('expense_list');
 var leader_board_list=document.getElementById('leaderBoard_list');
+let historyplaceholder=document.querySelector('#historyplaceholder')
 
 my_form.addEventListener('submit',addexpense);
 
@@ -69,6 +70,7 @@ function showPremiumMessage(){
     document.querySelector('#rzp-button').classList="invisible"
     document.querySelector('.premium_text').classList="float-right premium_text"
     document.querySelector('.leaderboard').classList='leaderboard float-left'
+    document.querySelector('#download_expenses').classList=""
 }
 
 function showexpenses(expense){
@@ -180,26 +182,30 @@ function show_leaderboard(expense){
     leader_board_list.appendChild(create_item)
 }
 
-document.getElementById("download_expenses").addEventListener("click", function(){
-    axios.get("http://localhost:8000/expense/get-history-data",{headers:{'Authorization':token}})
-    .then((data)=>{
-        console.log(data)
-    })
+document.getElementById("download_expenses").addEventListener("click", async function(){
+    try{
+        const token=localStorage.getItem('token')
+        const response=await axios.get("http://localhost:8000/expense/download",
+        {headers:{'Authorization':token}})
+        const downloaded_history=await axios.get("http://localhost:8000/expense/get-history-data",
+        {headers:{'Authorization':token}})
+        console.log(response['data'])
+        showDownloadhistory(response['data']);
+    }
+    catch (error) 
+    {
+    console.log(error);
+    alert(error.response.data.message);
+    } 
+});
 
-    var filename = "hello.html";
-    
-    download(filename, text);
-}, false);
-
-function download(filename, text) {
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
+function showDownloadhistory(data) { 
+    const date = new Date().toLocaleString();
+    const a = document.createElement('a');
+    a.className = "list-group-item text-nowrap";
+    a.href = `${data['URL']}`
+    a.innerHTML = `my_expense ${date}.txt`;
+    historyplaceholder.removeChild(historyplaceholder.firstElementChild);
+    historyplaceholder.appendChild(a);
 }
+    
