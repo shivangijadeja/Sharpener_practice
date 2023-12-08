@@ -45,15 +45,14 @@
     </div>
     <div class="container mt-5">
       <div class="row">
-          <div class="col-md-12">
-              <div class="pagination justify-content-center">
-                  <div class="btn-group">
-                      <button class="btn btn-secondary" id="prevPage">Previous</button>
-                      <button class="btn btn-secondary" id="currentPage">1</button>
-                      <button class="btn btn-secondary" id="nextPage">Next</button>
-                  </div>
-              </div>
-          </div>
+        <div class="container py-3 text-right"> 
+          <button class="btn" id="numofentriesbtn">change entries</button>
+              <label for="formControlRange">Numbers of entries</label>
+              <input type="range" class="form-control-range" id="formControlRange" min="5" max="50" value="5" step="5">
+              <span id="showEntries">5</span>
+        </div>
+        <div  class="container py-5 text-center" id="pagination">
+        </div>
       </div>
   </div>
     <div aria-labelledby="list-downloadhistory-list">

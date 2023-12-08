@@ -39,22 +39,103 @@ function addexpense(e){
 
 }
 
-window.onload = (event) => {
+window.addEventListener("DOMContentLoaded" , ()=>{
+    const objUrlParams = new URLSearchParams(Window.location);
+    const page = objUrlParams.get('page') || 1;
+
+    const entries = localStorage.getItem('numofentries');
+
+    if(entries){
+        document.getElementById('formControlRange').value = entries;
+        document.getElementById('showEntries').innerHTML = entries;
+    }
+
     const token=localStorage.getItem('token')
     const decoded_token=parseJwt(token)
-    console.log(decoded_token)
     const is_premium_user=decoded_token.is_premium_user
     if(is_premium_user==1){
         showPremiumMessage()
     }
-    axios.get("http://localhost:8000/expense/display-expense",{headers:{'Authorization':token}})
-    .then((res)=>{
+    getAllExpanses(token,page);
+    
+})
+
+async function getAllExpanses(token,page){
+    try{
+        let entries = localStorage.getItem('numofentries');
+        if(!entries){
+            entries = 5;
+        }
+        entries = parseInt(entries);
+        const res= await axios.get(`http://localhost:8000/expense/display-expense?page=${page}&entries=${entries}`,
+        {headers:{'Authorization':token}})
         for(var i=0;i<res.data.expenses[0].length;i++){
             showexpenses(res.data.expenses[0][i])
         }
-    })
-    .catch((err)=>{console.log(err)})
-};
+        showPagination(res.data)
+
+
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+function showPagination({
+    currentPage, hasNextPage , nextPage , hasPreviousPage , previousPage , lastPage
+})
+{
+    pagination.innerHTML =''
+
+    if(hasPreviousPage){
+        const btn2 = document.createElement('button');
+        btn2.innerHTML = previousPage;
+        btn2.classList='pagination_btn'
+        btn2.style='height:60%; width:3%'
+        btn2.addEventListener('click',()=>getPaginated(previousPage));
+        pagination.appendChild(btn2);
+    }
+
+    const btn1 = document.createElement('button');
+    btn1.innerHTML = `<h3>${currentPage}</h3>`;
+    btn1.classList='pagination_btn'
+    btn1.style='height:60%; width:3%'
+    btn1.addEventListener('click',()=>getPaginated(currentPage));
+    pagination.appendChild(btn1);
+
+    if(hasNextPage){
+        const btn3 = document.createElement('button');
+        btn3.classList='pagination_btn'
+        btn3.style='height:60%; width:3%'
+        btn3.innerHTML = nextPage;
+        btn3.addEventListener('click',()=>getPaginated(nextPage));
+        pagination.appendChild(btn3);
+    }
+
+}
+
+
+async function getPaginated(page){
+    try{
+        const token = localStorage.getItem('token');
+        let entries = localStorage.getItem('numofentries');
+        if(!entries){
+            entries = 10;
+        }
+        entries = parseInt(entries);
+        let res = await axios.get(`http://localhost:8000/expense/display-expense?page=${page}&entries=${entries}` ,
+        { headers :{"Authorization":token}});
+        item_list.innerHTML = "";
+        for(var i=0;i<res.data.expenses[0].length;i++){
+            showexpenses(res.data.expenses[0][i])
+        }
+        showPagination(res.data)
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
 
 function parseJwt (token) {
     var base64Url = token.split('.')[1];
@@ -209,3 +290,13 @@ function showDownloadhistory(data) {
     historyplaceholder.appendChild(a);
 }
     
+document.getElementById('formControlRange').oninput =(e)=>{
+    e.preventDefault()
+    const numOfEntries = document.getElementById('formControlRange').value;
+    document.getElementById('showEntries').innerHTML = numOfEntries;
+    localStorage.setItem('numofentries',numOfEntries);
+    const token = localStorage.getItem('token');
+    item_list.innerHTML = ''
+    getAllExpanses(token,1);
+    console.log(localStorage.getItem('numofentries'))
+}

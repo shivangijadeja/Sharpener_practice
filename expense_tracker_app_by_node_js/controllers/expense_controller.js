@@ -19,8 +19,23 @@ const addExpense=(req,res)=>{
 }
 
 const getAllExpense=(req,res)=>{
-    db.execute(`SELECT * FROM EXPENSE where user_id=${req.user}`).then((result)=>{
-        res.status(200).json({expenses:result})
+    const page = +req.query.page || 1;
+    const EXPANSE_PER_PAGE = +req.query.entries;
+    let totalItems;
+    const result=db.execute(`SELECT COUNT(*) as count FROM expense_tracker_app.expense where user_id=${req.user}`)
+    .then((res)=>{
+        totalItems=res[0][0].count
+    })
+    db.execute(`SELECT * FROM EXPENSE where user_id=${req.user} LIMIT ${EXPANSE_PER_PAGE} Offset ${(page-1) * EXPANSE_PER_PAGE}`).then((result)=>{
+        res.status(200).json({
+            expenses:result,
+            currentPage : page,
+            hasNextPage : EXPANSE_PER_PAGE * page < totalItems,
+            nextPage : page + 1,
+            hasPreviousPage : page > 1,
+            previousPage : page - 1,
+            lastPage : Math.ceil(totalItems/EXPANSE_PER_PAGE)
+        })
     })
 }
 
