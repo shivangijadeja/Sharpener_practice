@@ -7,63 +7,85 @@
     <link rel="stylesheet" href="./login.css">
     <title>Expense page</title>
 </head>
-<body>
-    <button type="submit" class="leaderboard float-left invisible" style="width: 20%; background-color: rgb(243, 194, 33);">Show leaderBoard</button>
-  <input type="text" value="You are now Premium User" class="invisible premium_text" style="width: 20%; background-color: rgb(243, 194, 33);">
-  <button type="submit" id="rzp-button" style="width: 20%; background-color: rgb(243, 194, 33);" 
-  class="float-right">Buy Premium Membership</button>
-  <button type="submit" id="download_expenses" style="width: 20%; background-color: rgb(243, 194, 33);"
-  class="invisible">Download Expenses</button>
-    <form action="" method="POST" id="addForm">
-        <div class="container">
-            <label for="amount"><b>Expense amount</b></label>
-            <input type="number" placeholder="Enter amount" name="amount" class="amount" required>
-        
-            <label for="des"><b>Description</b></label>
-            <input type="text" placeholder="Enter Description" name="des" class="des" required>
+<body background="./primary_img.png" style="background-repeat:no-repeat;" class="body_image">
+  <div class="container row col-md-12">
+  <div class="col-md-3 col-sm-12">
+    <button type="submit" class="leaderboard float-left invisible" 
+    style="background-color: rgb(243, 194, 33);">Show leaderBoard</button>
+  </div>
+  <div class="col-md-3 col-sm-12">
+    <button type="submit" id="download_expenses" style="background-color: rgb(243, 194, 33);"
+    class="invisible col-md-3 col-sm-12">Download Expenses</button>
+  </div>
+  <div class="col-md-6 col-sm-12">
+    <input type="text" value="You are now Premium User" 
+    class="invisible premium_text  col-md-3 col-sm-12" 
+    style="background-color: rgb(243, 194, 33);">
+    <button type="submit" id="rzp-button" style="background-color: rgb(243, 194, 33);" 
+    class="float-right col-md-6 col-sm-12">Buy Premium Membership</button>
+  </div>
+  
+</div>
 
-            <label for="category"><b>Expense category</b></label>
-            <select name="category" id="category">
-                <option value="Rent">Rent</option>
-                <option value="House expense">House expense</option>
-                <option value="Movies">Movies</option>
-                <option value="Travelling">Travelling</option>
-              </select>
+    
+    
+    
+  
+  
+  <div class="container row col-md-12">
+    <form action="" method="POST" id="addForm" class="col-sm-12 col-md-6">
         
-            <button type="submit">Add Expense</button>
-            
-          </div>
+      <label for="amount"><b>Expense amount</b></label>
+      <input type="number" placeholder="Enter amount" name="amount" class="amount" required>
+  
+      <label for="des"><b>Description</b></label>
+      <input type="text" placeholder="Enter Description" name="des" class="des" required>
+
+      <label for="category"><b>Expense category</b></label>
+      <select name="category" id="category">
+          <option value="Rent">Rent</option>
+          <option value="House expense">House expense</option>
+          <option value="Movies">Movies</option>
+          <option value="Travelling">Travelling</option>
+        </select>
+      <button type="submit">Add Expense</button>
+
+      <ul class="col-sm-12" id="leaderBoard_list">
+      </ul>
+
     </form>
-    <div>
+    
+    <div class="col-md-6  col-sm-12">
       <h4 style="text-align: center;">Expenses</h4>
             <ul id="expense_list">
             </ul>
+
+              <div class="row">
+                <div class="container py-3 text-right"> 
+                  <button class="btn" id="numofentriesbtn">change entries</button>
+                      <label for="formControlRange">Numbers of entries</label>
+                      <input type="range" class="form-control-range" id="formControlRange" min="5" max="50" value="5" step="5">
+                      <span id="showEntries">5</span>
+                </div>
+                <div  class="container py-5 text-center" id="pagination">
+                </div>
+              </div>
     </div>
-    <div>
-      <ul id="leaderBoard_list">
-      </ul>
-    </div>
-    <div class="container mt-5">
-      <div class="row">
-        <div class="container py-3 text-right"> 
-          <button class="btn" id="numofentriesbtn">change entries</button>
-              <label for="formControlRange">Numbers of entries</label>
-              <input type="range" class="form-control-range" id="formControlRange" min="5" max="50" value="5" step="5">
-              <span id="showEntries">5</span>
-        </div>
-        <div  class="container py-5 text-center" id="pagination">
-        </div>
+  </div>    
+    
+  <div class="container col-md-12">
+    <div aria-labelledby="list-downloadhistory-list">
+      <div class="card-body" style="overflow-y: auto; max-height: 400px;">
+              <h5 class="text-center">Complete Download History</h5>
+              <ul class="list-group" id="historyplaceholder">
+                  <a class="list-group-item list-group-item-action"
+                      href="">Nothing downloaded yet</a>
+              </ul>
       </div>
   </div>
-    <div aria-labelledby="list-downloadhistory-list">
-        <div class="card-body" style="overflow-y: auto; max-height: 400px;">
-                <h5 class="text-center">Complete Download History</h5>
-                <ul class="list-group" id="historyplaceholder">
-                    <a class="list-group-item list-group-item-action"
-                        href="">Nothing downloaded yet</a>
-                </ul>
-        </div>
-    </div>
+  </div>
+    
+    
     
 </body>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

@@ -91,7 +91,7 @@ function showPagination({
         const btn2 = document.createElement('button');
         btn2.innerHTML = previousPage;
         btn2.classList='pagination_btn'
-        btn2.style='height:60%; width:3%'
+        btn2.style='height:60%; width:3%; background-color: #FFFFFF; color:black'
         btn2.addEventListener('click',()=>getPaginated(previousPage));
         pagination.appendChild(btn2);
     }
@@ -99,14 +99,14 @@ function showPagination({
     const btn1 = document.createElement('button');
     btn1.innerHTML = `<h3>${currentPage}</h3>`;
     btn1.classList='pagination_btn'
-    btn1.style='height:60%; width:3%'
+    btn1.style='height:60%; width:3%; background-color: #FFFFFF; color:black'
     btn1.addEventListener('click',()=>getPaginated(currentPage));
     pagination.appendChild(btn1);
 
     if(hasNextPage){
         const btn3 = document.createElement('button');
         btn3.classList='pagination_btn'
-        btn3.style='height:60%; width:3%'
+        btn3.style='height:60%; width:3%; background-color: #FFFFFF; color:black;'
         btn3.innerHTML = nextPage;
         btn3.addEventListener('click',()=>getPaginated(nextPage));
         pagination.appendChild(btn3);
@@ -166,7 +166,7 @@ function showexpenses(expense){
     create_item.appendChild(item_text);
 
     var btn_del=document.createElement('button');
-    btn_del.className='btn btn-danger btn-sm float-right delete mr-2';
+    btn_del.className='btn btn-danger btn-sm float-right delete mr-1';
     var btn_text=document.createTextNode('DELETE');
     btn_del.appendChild(btn_text)
     create_item.appendChild(btn_del)

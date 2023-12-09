@@ -2,6 +2,14 @@
 form {
     border: 3px solid #f1f1f1;
   }
+
+  #addForm{
+    border: 0px;
+  }
+
+  .container{
+    background-color: rgb(248, 239, 228);
+  }
   
   /* Full-width inputs */
   input[type=text], input[type=password],input[type=email], input[type=number],select {
@@ -15,6 +23,12 @@ form {
 
   .pagination_btn{
     background-color:rgb(15, 24, 15);
+  }
+
+  .body_image{
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    backdrop-filter: blur(8px);
   }
   
   /* Set a style for all buttons */
@@ -36,9 +50,16 @@ form {
     margin: 0px !important;
   }
 
-  .navbar{
-    background-color: rgb(247, 213, 167) !important;
-}
+  .home_b_image{
+    background-repeat: no-repeat;
+    background-size:cover;
+  }
+
+  .home_nav_bar{
+    margin-left: 1100px;
+    font-size:x-large;
+    font-family: 'Arial Bold';
+  }
 
   
   /* Add a hover effect for buttons */

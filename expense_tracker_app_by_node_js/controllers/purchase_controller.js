@@ -4,13 +4,13 @@ const db=require('../utils/database')
 const purchasePremium=async(req,res)=>{
     try{
         var rzp=new razorpay({
-            key_id:"rzp_test_8gsqGSWEO0Wie8",
-            key_secret:"Vv6UnAbBlKfWFbJwYNL3JH92"
+            key_id:"rzp_test_Xq1Zj5MQQAZGdr",
+            key_secret:"YlbPDRZYerisNnGqcCOv6Wi5"
         })
         const amount=2500
         rzp.orders.create({amount,currency:"INR"},(err,order)=>{
             if(err){
-                throw new Error(JSON.stringify(err));
+                console.log(err)
             }
         db.execute('INSERT INTO expense_tracker_app.ORDER (paymentid,orderid,status,user_id)  VALUES (?,?,?,?)' , ['',order.id,'PENDING',req.user])
         .then(()=>{
