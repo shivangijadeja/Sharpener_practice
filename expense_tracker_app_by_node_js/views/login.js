@@ -12,7 +12,7 @@ function loginUser(e){
         "email":u_email,
         "password":u_pwd
     }
-    axios.get('http://localhost:8000/user/all-users').then((res)=>{
+    axios.get('/user/all-users').then((res)=>{
         if(res.data.users[0].length>0){
             for(let i=0;i<res.data.users.length;i++){
                 if(res.data.users[0][i].email===u_email){
@@ -23,7 +23,7 @@ function loginUser(e){
     }).then(()=>{
         if(user_exist){
 
-            axios.get('http://localhost:8000/user/all-users').then((res)=>{
+            axios.get('/user/all-users').then((res)=>{
             if(res.data.users[0].length>0){
                 for(let i=0;i<res.data.users.length;i++){
                     if(res.data.users[0][i].email===u_email && res.data.users[0][i].password!=u_pwd){
@@ -34,19 +34,19 @@ function loginUser(e){
                 }
             }
         }).then(()=>{
-            axios.post('http://localhost:8000/user/login',user)
+            axios.post('/user/login',user)
             .then((res)=>{
                 localStorage.setItem('token',res.data.token)
-                window.location.href = "file:///D:/Shivangi/sharpener/Sharpener_practice/expense_tracker_app_by_node_js/views/expense.html"
+                window.location.href = "/expense.html"
             })
             .catch((err)=>console.log(err))
         })    
         }
         else{
-            axios.post('http://localhost:8000/user/login',user)
+            axios.post('/user/login',user)
             .then((res)=>{
                 localStorage.setItem('token',res.data.token)
-                window.location.href = "file:///D:/Shivangi/sharpener/Sharpener_practice/expense_tracker_app_by_node_js/views/expense.html"
+                window.location.href = "/expense.html"
             })
             .catch((err)=>console.log(err))
                     

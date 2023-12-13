@@ -14,7 +14,7 @@ function addUser(e){
         "email":u_email,
         "password":u_pwd
     }
-    axios.get('http://localhost:8000/user/all-users').then((res)=>{
+    axios.get('/user/all-users').then((res)=>{
         if(res.data.users[0].length>0){
             for(let i=0;i<res.data.users.length;i++){
                 if(res.data.users[0][i].email===u_email){
@@ -24,7 +24,7 @@ function addUser(e){
         }
     }).then(()=>{
         if(!user_exist){
-            axios.post('http://localhost:8000/user/add-user',user)
+            axios.post('/user/add-user',user)
                 .then((res)=>console.log(res))
                 .catch((err)=>console.log(err))
         }

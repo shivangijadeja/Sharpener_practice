@@ -50,15 +50,14 @@ form {
     margin: 0px !important;
   }
 
-  .home_b_image{
-    background-repeat: no-repeat;
-    background-size:cover;
-  }
-
   .home_nav_bar{
     margin-left: 1100px;
     font-size:x-large;
     font-family: 'Arial Bold';
+  }
+
+  nav{
+    background-color: #c6cef5;
   }
 
   

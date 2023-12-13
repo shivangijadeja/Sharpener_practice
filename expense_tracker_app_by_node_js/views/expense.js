@@ -33,7 +33,7 @@ function addexpense(e){
         'category':category_val
     }
 
-    axios.post('http://localhost:8000/expense/add-expense',expense,{headers:{'Authorization':token}})
+    axios.post('/expense/add-expense',expense,{headers:{'Authorization':token}})
                 .then((res)=>console.log(res))
                 .catch((err)=>console.log(err))
 
@@ -67,7 +67,7 @@ async function getAllExpanses(token,page){
             entries = 5;
         }
         entries = parseInt(entries);
-        const res= await axios.get(`http://localhost:8000/expense/display-expense?page=${page}&entries=${entries}`,
+        const res= await axios.get(`/expense/display-expense?page=${page}&entries=${entries}`,
         {headers:{'Authorization':token}})
         for(var i=0;i<res.data.expenses[0].length;i++){
             showexpenses(res.data.expenses[0][i])
@@ -123,7 +123,7 @@ async function getPaginated(page){
             entries = 10;
         }
         entries = parseInt(entries);
-        let res = await axios.get(`http://localhost:8000/expense/display-expense?page=${page}&entries=${entries}` ,
+        let res = await axios.get(`/expense/display-expense?page=${page}&entries=${entries}` ,
         { headers :{"Authorization":token}});
         item_list.innerHTML = "";
         for(var i=0;i<res.data.expenses[0].length;i++){
@@ -152,6 +152,7 @@ function showPremiumMessage(){
     document.querySelector('.premium_text').classList="float-right premium_text"
     document.querySelector('.leaderboard').classList='leaderboard float-left'
     document.querySelector('#download_expenses').classList=""
+    document.querySelector('.dl_history').classList="dl_history"
 }
 
 function showexpenses(expense){
@@ -186,7 +187,7 @@ function remove_expense(e){
         if(confirm('Are you sure?')){
             console.log(selected_amt,selected_des,selected_category)
             item_list.removeChild(li);
-            axios.get("http://localhost:8000/expense/display-expense",{headers:{'Authorization':token}})
+            axios.get("/expense/display-expense",{headers:{'Authorization':token}})
             .then((res)=>{
                 for(var i=0;i<res.data.expenses[0].length;i++){
                     if(res.data.expenses[0][i]['description']===selected_des &&
@@ -197,7 +198,7 @@ function remove_expense(e){
                 }
             })
             .then(()=>{
-                axios.delete(`http://localhost:8000/expense/delete-expense/${id}`,{headers:{'Authorization':token,'amount':selected_amt}})
+                axios.delete(`/expense/delete-expense/${id}`,{headers:{'Authorization':token,'amount':selected_amt}})
                 .then((res)=>console.log(res))
                 .catch((err)=>console.log(err))
             }
@@ -208,13 +209,13 @@ function remove_expense(e){
 
 document.getElementById('rzp-button').onclick= async function(e){
     const token=localStorage.getItem('token')
-    const response=await axios.get('http://localhost:8000/purchase/premiummembership',
+    const response=await axios.get('/purchase/premiummembership',
     {headers:{'Authorization':token}})
     var options={
         "key":response.data.key_id,
         "order_id":response.data.order.id,
         "handler":async function(response){
-            await axios.post('http://localhost:8000/purchase/updatetransactionstatus',{
+            await axios.post('/purchase/updatetransactionstatus',{
                 order_id:options.order_id,
                 payment_id:response.razorpay_payment_id,               
             },{headers:{'Authorization':token,'is_premium_user':true}})
@@ -235,7 +236,7 @@ document.getElementById('rzp-button').onclick= async function(e){
 
 
 document.querySelector('.leaderboard').onclick=()=>{
-    axios.get("http://localhost:8000/expense/show-leaderboard").then((res)=>{
+    axios.get("/expense/show-leaderboard").then((res)=>{
         var text=document.createElement('h4')
         const item_text=document.createTextNode("Leader board")
         text.style='text-align:center'
@@ -266,9 +267,9 @@ function show_leaderboard(expense){
 document.getElementById("download_expenses").addEventListener("click", async function(){
     try{
         const token=localStorage.getItem('token')
-        const response=await axios.get("http://localhost:8000/expense/download",
+        const response=await axios.get("/expense/download",
         {headers:{'Authorization':token}})
-        const downloaded_history=await axios.get("http://localhost:8000/expense/get-history-data",
+        const downloaded_history=await axios.get("/expense/get-history-data",
         {headers:{'Authorization':token}})
         console.log(response['data'])
         showDownloadhistory(response['data']);
