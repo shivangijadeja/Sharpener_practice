@@ -4,7 +4,10 @@ const app=express()
 const sequelize=require('./utils/database')
 const PORT=process.env.PORT || 8000
 
-app.use(cors())
+app.use(cors({
+    origin:"*",
+    methods:["GET","POST"]
+}))
 
 app.use(express.json())
 app.use(express.static('views'));

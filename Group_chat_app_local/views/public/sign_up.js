@@ -28,12 +28,13 @@ async function addUser(e){
     if(!user_exist){
         try{
             const add_user=await axios.post('/user/add-user',user)
+            alert('Successfully signed up')
         }
         catch(err){
             console.error(err)
         }
     }
     else{
-        alert("User already exists!")
+        alert("User already exists!, Please login")
     }
 }
