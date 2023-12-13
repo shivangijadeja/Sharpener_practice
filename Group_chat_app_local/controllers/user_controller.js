@@ -36,7 +36,20 @@ const addUser=async (req,res,next)=>{
     }
 }
 
+function generateAccessToken(id,is_premium_user){
+    return jwt.sign({user_id:id,is_premium_user},'secretkey')
+}
+
+const testUser=async (req,res,next)=>{
+    const email = req.body.email;
+    const pwd=req.body.password;
+    const result=await User.findOne({
+        where:{'email':email}
+    })
+}
+
 module.exports={
     getAllUsers,
-    addUser
+    addUser,
+    testUser,
 }
