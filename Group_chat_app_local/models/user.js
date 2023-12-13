@@ -3,21 +3,16 @@ const Sequelize=require('sequelize');
 const sequelize=require('../utils/database')
 
 const User=sequelize.define('user',{
-    user_name:{
-        type:Sequelize.STRING
+    id:{
+        type:Sequelize.INTEGER, 
+        autoIncrement:true, 
+        allowNull:false, 
+        primaryKey:true
     },
-    email:{
-        type:Sequelize.STRING
-    },
-    phone_number:{
-        type:Sequelize.NUMBER
-    },
-    password:{
-        type:Sequelize.STRING
-    },
-    is_return:{
-        type:Sequelize.BOOLEAN
-    }
+    user_name:Sequelize.STRING,
+    email:Sequelize.STRING,
+    phone_number:Sequelize.STRING,
+    password:Sequelize.STRING,
 })
 
 module.exports=User; 
