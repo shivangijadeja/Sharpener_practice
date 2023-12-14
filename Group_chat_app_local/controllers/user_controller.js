@@ -36,8 +36,8 @@ const addUser=async (req,res,next)=>{
     }
 }
 
-function generateAccessToken(id,is_premium_user){
-    return jwt.sign({user_id:id,is_premium_user},'secretkey')
+function generateAccessToken(id){
+    return jwt.sign({user_id:id},'secretkey')
 }
 
 const testUser=async (req,res,next)=>{
@@ -46,6 +46,22 @@ const testUser=async (req,res,next)=>{
     const result=await User.findOne({
         where:{'email':email}
     })
+    if(result!=null){
+        bcrypt.compare(pwd,result.dataValues.password,(err,response)=>{
+            if(err){
+                res.status(500).send("Something went wrong")
+            }
+            if(response==true){
+                res.status(200).json({message:"User login succesfully",token:generateAccessToken(result.dataValues.id)});
+            }
+            else{
+                res.status(401).send("User not authorised");
+            }
+        })
+    }
+    else{
+        res.status(404).send("User not found");
+    }
 }
 
 module.exports={

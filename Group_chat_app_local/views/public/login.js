@@ -40,4 +40,7 @@ async function loginUser(e){
         }
         
     }
+    else{
+            const fetch_err=await axios.post('/user/login',user)
+    }
 }
