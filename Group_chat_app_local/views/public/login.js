@@ -33,7 +33,7 @@ async function loginUser(e){
         try{
             const user_login=await axios.post('/user/login',user)
             localStorage.setItem('token',user_login.data.token)
-            window.location.href = "/"
+            window.location.href = "/chat"
         }
         catch(err){
             console.error(err)

@@ -21,6 +21,10 @@ app.get('/',(req,res)=>{
     res.sendFile("sign_up.html",{root:'views'})
 })
 
+app.get('/chat',(req,res)=>{
+    res.sendFile("chat.html",{root:'views'})
+})
+
 sequelize
 .sync(
     // { force: true }
