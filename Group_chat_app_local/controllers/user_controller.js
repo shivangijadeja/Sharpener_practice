@@ -1,4 +1,5 @@
 const User=require('../models/user')
+const ChatHistory=require('../models/chatHistory')
 const bcrypt=require('bcrypt'); 
 const jwt=require('jsonwebtoken')
 
@@ -36,8 +37,8 @@ const addUser=async (req,res,next)=>{
     }
 }
 
-function generateAccessToken(id){
-    return jwt.sign({user_id:id},'secretkey')
+function generateAccessToken(id,user_name){
+    return jwt.sign({user_id:id,user_name:user_name},'secretkey')
 }
 
 const testUser=async (req,res,next)=>{
@@ -52,7 +53,7 @@ const testUser=async (req,res,next)=>{
                 res.status(500).send("Something went wrong")
             }
             if(response==true){
-                res.status(200).json({message:"User login succesfully",token:generateAccessToken(result.dataValues.id)});
+                res.status(200).json({message:"User login succesfully",token:generateAccessToken(result.dataValues.id,result.dataValues.user_name)});
             }
             else{
                 res.status(401).send("User not authorised");
@@ -64,8 +65,26 @@ const testUser=async (req,res,next)=>{
     }
 }
 
+const postMessage=async (req,res,next)=>{
+    const user_id=req.body.user_id
+    const message=req.body.message
+    try{
+        const post_msg=await ChatHistory.create({
+            userId:user_id,
+            message:message
+        })
+        res.status(201).json({message:"Message saved successfully!!!"})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+
+}
+
 module.exports={
     getAllUsers,
     addUser,
     testUser,
+    postMessage
 }

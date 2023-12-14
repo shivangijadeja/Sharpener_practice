@@ -8,4 +8,6 @@ router.post('/user/add-user',userController.addUser)
 
 router.post('/user/login',userController.testUser)
 
+router.post('/post-meesage',userController.postMessage)
+
 module.exports=router
