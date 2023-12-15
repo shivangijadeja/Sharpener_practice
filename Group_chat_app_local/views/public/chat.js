@@ -25,3 +25,9 @@ function parseJwt (token) {
 
     return JSON.parse(jsonPayload);
 }
+
+window.addEventListener("DOMContentLoaded" , async()=>{
+    const token = localStorage.getItem('token');
+    const fetch_all_msgs=await axios.get('/get-all-messages',{headers:{'Authorization':token}})
+    console.log(fetch_all_msgs.data.messages)
+})

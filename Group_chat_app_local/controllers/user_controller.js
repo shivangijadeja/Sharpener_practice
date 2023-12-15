@@ -82,9 +82,42 @@ const postMessage=async (req,res,next)=>{
 
 }
 
+const getAllMessages=async (req,res,next)=>{
+    try{
+        const fetch_all_msgs=await ChatHistory.findAll({
+            include: [
+                {
+                    model:User,
+                    attibutes: ['id','name', 'message', 'date_time']
+                }
+            ],
+            order: [['date_time', 'ASC']]
+        })
+        const chats = fetch_all_msgs.map(async (ele) => {
+            const user=await User.findOne({
+                attibutes: ['user_name'],
+                where:{'id':ele.userId}
+            })
+            return {
+                messageId: ele.id,
+                message: ele.message,
+                name: user.dataValues.user_name,
+                userId: ele.userId,
+                date_time: ele.date_time
+            }
+        })
+        res.status(200).json({messages:chats})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
 module.exports={
     getAllUsers,
     addUser,
     testUser,
-    postMessage
+    postMessage,
+    getAllMessages,
 }
