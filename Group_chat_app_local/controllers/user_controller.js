@@ -2,6 +2,7 @@ const User=require('../models/user')
 const ChatHistory=require('../models/chatHistory')
 const bcrypt=require('bcrypt'); 
 const jwt=require('jsonwebtoken')
+const { Op } = require('sequelize');
 
 const getAllUsers= async (req,res,next)=>{
     try{
@@ -84,7 +85,7 @@ const postMessage=async (req,res,next)=>{
 
 const getAllMessages=async (req,res,next)=>{
     try{
-        const lastMessageId = request.query.lastMessageId || 0;
+        const lastMessageId = req.query.lastMessageId || 0;
         const fetch_all_msgs=await ChatHistory.findAll({
             include: [
                 {
