@@ -93,20 +93,17 @@ const getAllMessages=async (req,res,next)=>{
             ],
             order: [['date_time', 'ASC']]
         })
-        const chats = fetch_all_msgs.map(async (ele) => {
-            const user=await User.findOne({
-                attibutes: ['user_name'],
-                where:{'id':ele.userId}
-            })
+        const chats = fetch_all_msgs.map((ele) => {
             return {
-                messageId: ele.id,
-                message: ele.message,
-                name: user.dataValues.user_name,
-                userId: ele.userId,
-                date_time: ele.date_time
+                messageId: ele.dataValues.id,
+                message: ele.dataValues.message,
+                name: ele.dataValues.user.dataValues.user_name,
+                userId: ele.dataValues.userId,
+                date_time: ele.dataValues.date_time
             }
         })
-        res.status(200).json({messages:chats})
+        const all_chat=await chats
+        res.status(200).json({messages:all_chat})
     }
     catch(err){
         console.log(err)

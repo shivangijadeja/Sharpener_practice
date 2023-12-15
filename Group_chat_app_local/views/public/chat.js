@@ -1,5 +1,6 @@
 const send_button=document.querySelector('.send_btn')
 const msg_input=document.querySelector('#message_box')
+const msg_table=document.querySelector('.msg_table')
 
 send_button.addEventListener("click",onSendMessage)
 
@@ -12,8 +13,14 @@ async function onSendMessage(e){
         "message":input_val,
         "user_id":user_id
     }
-    const post_msg=await axios.post('/post-meesage',chatHis)
-    console.log(post_msg)
+    try{
+        const post_msg=await axios.post('/post-meesage',chatHis)
+        location.reload()
+    }
+    catch(err){
+        alert(err)
+    }
+
 }
 
 function parseJwt (token) {
@@ -29,5 +36,18 @@ function parseJwt (token) {
 window.addEventListener("DOMContentLoaded" , async()=>{
     const token = localStorage.getItem('token');
     const fetch_all_msgs=await axios.get('/get-all-messages',{headers:{'Authorization':token}})
-    console.log(fetch_all_msgs.data.messages)
+    display_messages(fetch_all_msgs.data.messages)
 })
+
+async function display_messages(arr_of_msgs){
+    arr_of_msgs.forEach(element => {
+        const tr=document.createElement('tr')
+        const td=document.createElement('td')
+        console.log(element)
+        var add_text=document.createTextNode(element.name.concat("  :  ",element.message))
+        td.appendChild(add_text)
+        tr.appendChild(td)
+        msg_table.appendChild(tr)
+    });
+
+}
