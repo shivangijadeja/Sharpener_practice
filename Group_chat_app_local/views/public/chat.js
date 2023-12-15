@@ -35,15 +35,31 @@ function parseJwt (token) {
 
 window.addEventListener("DOMContentLoaded" , async()=>{
     const token = localStorage.getItem('token');
-    const fetch_all_msgs=await axios.get('/get-all-messages',{headers:{'Authorization':token}})
-    display_messages(fetch_all_msgs.data.messages)
+    const local_storage_msgs=localStorage.getItem("chatHistory")
+    if(local_storage_msgs){
+        const parsedChatHistory = JSON.parse(local_storage_msgs);
+        const lastMessageId = parsedChatHistory[parsedChatHistory.length - 1].messageId;
+        const fetch_all_msgs=await axios.get(`/get-all-messages?lastMessageId=${lastMessageId}`,{headers:{'Authorization':token}})
+        const mergedChats = [...parsedChatHistory, ...fetch_all_msgs.data.messages];
+        const savingChats=mergedChats.slice(-1000)
+        localStorage.setItem("chatHistory",JSON.stringify(savingChats))
+        display_messages(savingChats)
+    }
+    else{
+        const fetch_all_msgs=await axios.get(`/get-all-messages?lastMessageId=0`,{headers:{'Authorization':token}})
+        const msgs=fetch_all_msgs.data.messages
+        const savingChats=msgs.slice(-1000)
+        localStorage.setItem("chatHistory",JSON.stringify(savingChats))
+        display_messages(savingChats)
+    }
+    
+    
 })
 
 async function display_messages(arr_of_msgs){
     arr_of_msgs.forEach(element => {
         const tr=document.createElement('tr')
         const td=document.createElement('td')
-        console.log(element)
         var add_text=document.createTextNode(element.name.concat("  :  ",element.message))
         td.appendChild(add_text)
         tr.appendChild(td)

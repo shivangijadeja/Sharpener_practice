@@ -1,5 +1,4 @@
 const userController=require('../controllers/user_controller');
-const userAuthenticate=require('../middleware/user_authentication')
 
 const router=require('express').Router()
 
@@ -11,6 +10,6 @@ router.post('/user/login',userController.testUser)
 
 router.post('/post-meesage',userController.postMessage)
 
-router.get('/get-all-messages',userAuthenticate.authenticate,userController.getAllMessages)
+router.get('/get-all-messages',userController.getAllMessages)
 
 module.exports=router

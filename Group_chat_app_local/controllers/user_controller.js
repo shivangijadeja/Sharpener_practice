@@ -84,6 +84,7 @@ const postMessage=async (req,res,next)=>{
 
 const getAllMessages=async (req,res,next)=>{
     try{
+        const lastMessageId = request.query.lastMessageId || 0;
         const fetch_all_msgs=await ChatHistory.findAll({
             include: [
                 {
@@ -91,7 +92,12 @@ const getAllMessages=async (req,res,next)=>{
                     attibutes: ['id','name', 'message', 'date_time']
                 }
             ],
-            order: [['date_time', 'ASC']]
+            order: [['date_time', 'ASC']],
+            where: {
+                id: {
+                    [Op.gt]: lastMessageId
+                }
+            }
         })
         const chats = fetch_all_msgs.map((ele) => {
             return {
