@@ -11,15 +11,31 @@
 <body>
     <h1>Chat App</h1>
     <div class="container row col-md-12 col-sm-12">
-        <table class="msg_table">
+        <div class="col-md-4" class="list_of_groups">
+
+        </div>
+        <div class="col-md-4">
+            <form action="" class="create_group">
+                <label for="grp_name">Name of the group</label>
+                <input type="text" placeholder="Add name of group">
+                <label for="invite people">Invite People</label>
+                <ul class="user_list"></ul>
+                <button type="submit">Create Group</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <table class="msg_table">
         
-        </table>
+            </table>
+            <div class="container col-md-12 col-sm-12 row ">
+                <input type="text" name="message" id="message_box" class="col-md-10 col-sm-12">
+                <button type="submit" class="col-md-2 col-sm-12 send_btn">Send</button>
+            </div>
+        </div>
+        
     </div>
     <hr>
-    <div class="container col-md-12 col-sm-12 row ">
-        <input type="text" name="message" id="message_box" class="col-md-10 col-sm-12">
-        <button type="submit" class="col-md-2 col-sm-12 send_btn">Send</button>
-    </div>
+    
     
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>

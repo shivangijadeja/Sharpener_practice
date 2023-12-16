@@ -1,8 +1,11 @@
 const send_button=document.querySelector('.send_btn')
 const msg_input=document.querySelector('#message_box')
 const msg_table=document.querySelector('.msg_table')
+const user_list=document.querySelector('.user_list')
 
 send_button.addEventListener("click",onSendMessage)
+
+user_list.addEventListener("click",setUserChecked)
 
 async function onSendMessage(e){
     const token = localStorage.getItem('token');
@@ -36,7 +39,7 @@ function parseJwt (token) {
 window.addEventListener("DOMContentLoaded" , async()=>{
     const token = localStorage.getItem('token');
     const local_storage_msgs=localStorage.getItem("chatHistory")
-    if(local_storage_msgs){
+    if(local_storage_msgs.length>1){
         const parsedChatHistory = JSON.parse(local_storage_msgs);
         const lastMessageId = parsedChatHistory[parsedChatHistory.length - 1].messageId;
         const fetch_all_msgs=await axios.get(`/get-all-messages?lastMessageId=${lastMessageId}`,{headers:{'Authorization':token}})
@@ -52,7 +55,26 @@ window.addEventListener("DOMContentLoaded" , async()=>{
         localStorage.setItem("chatHistory",JSON.stringify(savingChats))
         display_messages(savingChats)
     }
-    
+    try{
+        const get_users=await axios.get('/user/all-users')
+        if(get_users.data.users.length>0){
+            for(let i=0;i<get_users.data.users.length;i++){
+                const li=document.createElement('li')
+                const check_box=document.createElement('INPUT')
+                check_box.setAttribute("type", "checkbox")
+                check_box.setAttribute("value", get_users.data.users[i].user_name)
+                check_box.setAttribute("id", get_users.data.users[i].user_name)
+                check_box.setAttribute("is_checked", false)
+                const u_name=document.createTextNode(get_users.data.users[i].user_name)
+                li.appendChild(check_box)
+                li.appendChild(u_name)
+                user_list.appendChild(li)
+            }
+        }
+    }
+    catch(err){
+        console.error(err)
+    }
     
 })
 
@@ -66,4 +88,15 @@ async function display_messages(arr_of_msgs){
         msg_table.appendChild(tr)
     });
 
+}
+
+function setUserChecked(e){
+    const selected_ele=e.srcElement
+    if(selected_ele.getAttribute('is_checked')==="false"){
+        selected_ele.setAttribute('is_checked',true)
+    }
+    else{
+        selected_ele.setAttribute('is_checked',false)
+    }
+    
 }
