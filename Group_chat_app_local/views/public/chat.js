@@ -116,11 +116,22 @@ window.addEventListener("DOMContentLoaded" , async()=>{
 })
 
 async function display_groups(arr_of_grps){
+    const token = localStorage.getItem('token');
+    const decoded = parseJwt(token);
+    const admin_user_id=decoded.user_id
     arr_of_grps.forEach(element=>{
         const tr=document.createElement('tr')
-        const td=document.createElement('td')
+        const td=document.createElement('li')
+        td.className='list-group-item'
         var add_text=document.createTextNode(element.name)
         td.appendChild(add_text)
+        const btn_edit=document.createElement('button')
+        const btn_text=document.createTextNode("Edit")
+        btn_edit.appendChild(btn_text)
+        btn_edit.className='btn-sm btn-info btn_edit'
+        if(admin_user_id===element.AdminId){
+            td.appendChild(btn_edit)
+        }
         tr.appendChild(td)
         list_of_groups.appendChild(tr)
     })
@@ -153,11 +164,15 @@ function setUserChecked(e){
 }
 
 async function onSelectGroup(e){
+    const target=e.target
     const token = localStorage.getItem('token');
     while (msg_table.firstChild) {
         msg_table.removeChild(msg_table.lastChild);
     }
-    const selected_grp=e.srcElement.innerText
+    var selected_grp=e.srcElement.innerText
+    if(selected_grp.includes("Edit")){
+        selected_grp=selected_grp.replace("Edit","")
+    }
     document.querySelector('#selected_grp_name').value=selected_grp
     try{
         if(selected_grp==='Common-chats'){

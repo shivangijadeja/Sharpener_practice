@@ -11,23 +11,26 @@
 <body>
     <h1>Chat App</h1>
     <div class="container row col-md-12 col-sm-12">
-        <div class="col-md-4">
-            <form action="" class="create_group">
-                <label for="grp_name">Name of the group</label>
-                <input type="text" placeholder="Add name of group" class="grp_name">
-                <label for="invite people">Invite People</label>
-                <ul class="user_list"></ul>
-                <button type="submit">Create Group</button>
-            </form>
+        <div class="col-md-6">
+            <div class="col-md-12">
+                <form action="" class="create_group">
+                    <label for="grp_name">Name of the group</label>
+                    <input type="text" placeholder="Add name of group" class="grp_name">
+                    <label for="invite people">Invite People</label>
+                    <ul class="user_list"></ul>
+                    <button type="submit" class="btn-sm" style="width: 30%;">Create Group</button>
+                    <button type="submit" class="btn-sm" style="width: 30%; float: inline-end;">Save Changes</button>
+                </form>
+            </div>
+            <div class="col-md-12">
+                <table class="list_of_groups">
+                    <tr>
+                        <li class="list-group-item">Common-chats</li>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div class="col-md-4">
-            <table class="list_of_groups">
-                <tr>
-                    <td>Common-chats</td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <input type="text" name="grp_name" id="selected_grp_name" value="Common-chats">
             <table class="msg_table">
         
