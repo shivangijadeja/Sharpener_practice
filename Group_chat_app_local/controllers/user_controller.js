@@ -1,8 +1,11 @@
 const User=require('../models/user')
 const ChatHistory=require('../models/chatHistory')
+const Group=require('../models/group')
+const GroupMember=require('../models/group_members')
 const bcrypt=require('bcrypt'); 
 const jwt=require('jsonwebtoken')
 const { Op } = require('sequelize');
+const CommonChats=require('../models/common_chats')
 
 const getAllUsers= async (req,res,next)=>{
     try{
@@ -69,10 +72,15 @@ const testUser=async (req,res,next)=>{
 const postMessage=async (req,res,next)=>{
     const user_id=req.body.user_id
     const message=req.body.message
+    const grp_name=req.body.group_name
     try{
+        const selected_grp=await Group.findOne({
+            where:{name:grp_name}
+        })
         const post_msg=await ChatHistory.create({
             userId:user_id,
-            message:message
+            message:message,
+            GroupId:selected_grp.dataValues.id
         })
         res.status(201).json({message:"Message saved successfully!!!"})
     }
@@ -83,10 +91,25 @@ const postMessage=async (req,res,next)=>{
 
 }
 
+const postCommonMessage=async (req,res,next)=>{
+    const user_id=req.body.user_id
+    const message=req.body.message
+    try{
+        const post_msg=await CommonChats.create({
+            userId:user_id,
+            message:message
+        })
+        res.status(201).json({message:"Message saved successfully!!!"})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
 const getAllMessages=async (req,res,next)=>{
     try{
-        const lastMessageId = req.query.lastMessageId || 0;
-        const fetch_all_msgs=await ChatHistory.findAll({
+        const fetch_all_msgs=await CommonChats.findAll({
             include: [
                 {
                     model:User,
@@ -94,11 +117,6 @@ const getAllMessages=async (req,res,next)=>{
                 }
             ],
             order: [['date_time', 'ASC']],
-            where: {
-                id: {
-                    [Op.gt]: lastMessageId
-                }
-            }
         })
         const chats = fetch_all_msgs.map((ele) => {
             return {
@@ -110,7 +128,90 @@ const getAllMessages=async (req,res,next)=>{
             }
         })
         const all_chat=await chats
+        console.log(all_chat)
         res.status(200).json({messages:all_chat})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
+const addGroup=async(req,res,next)=>{
+    const grp_name=req.body.name
+    const users=req.body.users
+    const admin_id=req.body.admin_id
+    try{
+        const grp=await Group.create({
+            'name':grp_name,
+            'AdminId':admin_id
+        })
+        const grp_members=await grp.addUsers(users.map((ele)=>{
+            return Number(ele)
+        }))
+        return res.status(200).json({ grp, message: "Group is succesfylly created" })
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+
+}
+
+const getAllGroups=async(req,res,next)=>{
+    try{
+        const user=req.user
+        const rel_user_list=[]
+        const related_grps=await GroupMember.findAll({
+            where:{userId:user}
+        })
+        related_grps.forEach(element => {
+            rel_user_list.push(element.dataValues.GroupId)
+        });
+        const all_grps=await Group.findAll({
+            where:{
+                id:{
+                    [Op.in]:rel_user_list
+                }
+            }
+        })
+        res.status(200).json({groups:all_grps})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
+const getGroupMessages=async (req,res,next)=>{
+    try{
+        const group=req.query.group
+        const selected_grp_id=await Group.findOne({
+            where:{name:group}
+        })
+        const fetch_all_msgs=await ChatHistory.findAll({
+            include: [
+                {
+                    model:User,
+                    attibutes: ['id','name', 'message', 'date_time']
+                }
+            ],
+            order: [['date_time', 'ASC']],
+            where:{GroupId:selected_grp_id.dataValues.id}
+        })
+        const chats = fetch_all_msgs.map((ele) => {
+            return {
+                messageId: ele.dataValues.id,
+                message: ele.dataValues.message,
+                name: ele.dataValues.user.dataValues.user_name,
+                userId: ele.dataValues.userId,
+                date_time: ele.dataValues.date_time
+            }
+        })
+        const all_chat=await chats
+        console.log(all_chat)
+        res.status(200).json({messages:all_chat})
+
     }
     catch(err){
         console.log(err)
@@ -124,4 +225,8 @@ module.exports={
     testUser,
     postMessage,
     getAllMessages,
+    addGroup,
+    getAllGroups,
+    getGroupMessages,
+    postCommonMessage,
 }

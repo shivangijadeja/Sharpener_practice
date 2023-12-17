@@ -18,6 +18,7 @@ const User=require('./models/user')
 const Groups=require('./models/group')
 const GroupMember=require('./models/group_members')
 const ChatHistory=require('./models/chatHistory')
+const CommonChats=require('./models/common_chats')
 
 app.use(userRoute)
 
@@ -31,6 +32,8 @@ app.get('/chat',(req,res)=>{
 
 User.hasMany(ChatHistory)
 ChatHistory.belongsTo(User)
+User.hasMany(CommonChats)
+CommonChats.belongsTo(User)
 User.belongsToMany(Groups, { through: GroupMember });
 Groups.belongsToMany(User, { through: GroupMember });
 Groups.belongsTo(User,{foreignKey: 'AdminId',constraints:true,onDelete:'CASCADE'})
@@ -39,7 +42,7 @@ ChatHistory.belongsTo(Groups);
 
 sequelize
 .sync(
-    { force: true }
+    // { force: true }
     )
 .then(()=>{
     app.listen(PORT,()=>{
