@@ -4,12 +4,15 @@ const msg_table=document.querySelector('.msg_table')
 const user_list=document.querySelector('.user_list')
 const create_group_form =document.querySelector('.create_group')
 const list_of_groups=document.querySelector('.list_of_groups')
+const edit_grp_btn=document.querySelector('.edit_grp_btn')
 
 list_of_groups.addEventListener("click",onSelectGroup)
 
 send_button.addEventListener("click",onSendMessage)
 
 user_list.addEventListener("click",setUserChecked)
+
+edit_grp_btn.addEventListener("click",editGroup)
 
 create_group_form.addEventListener("submit",addGroup)
 
@@ -164,26 +167,83 @@ function setUserChecked(e){
 }
 
 async function onSelectGroup(e){
-    const target=e.target
+    const target=e.target.textContent
+    
     const token = localStorage.getItem('token');
-    while (msg_table.firstChild) {
-        msg_table.removeChild(msg_table.lastChild);
+    if(target==="Edit"){
+        document.querySelector('.create_grp_btn').classList='btn-sm create_grp_btn invisible'
+        document.querySelector('.edit_grp_btn').classList='btn-sm edit_grp_btn'
+        const edited_grp=e.target.previousSibling
+        document.querySelector('.grp_name').value=edited_grp.textContent
+        try{
+            const fetch_details=await axios.get(`/get-group-details?name=${edited_grp.textContent}`)
+            document.querySelector('.edit_grp_btn').setAttribute("edit_group_id",fetch_details.data.group.id)
+            const users_id_list=fetch_details.data.members
+            const u_list=document.querySelector('.user_list')
+            var children = u_list.children;
+            for (var i = 0; i <= children.length; i++) {
+                var user = children[i];
+                if(users_id_list.includes(Number(user.querySelector("input").getAttribute('id')))){
+                    user.querySelector("input").setAttribute('is_checked',true)
+                    user.querySelector("input").checked = true
+                }
+                else{
+                    user.querySelector("input").setAttribute('is_checked',false)
+                    user.querySelector("input").checked = false   
+                }
+            }
+        }
+        catch(err){
+            console.log(err)
+        }
     }
-    var selected_grp=e.srcElement.innerText
-    if(selected_grp.includes("Edit")){
-        selected_grp=selected_grp.replace("Edit","")
+    else{
+        while (msg_table.firstChild) {
+            msg_table.removeChild(msg_table.lastChild);
+        }
+        var selected_grp=e.srcElement.innerText
+        if(selected_grp.includes("Edit")){
+            selected_grp=selected_grp.replace("Edit","")
+        }
+        document.querySelector('#selected_grp_name').value=selected_grp
+        try{
+            if(selected_grp==='Common-chats'){
+                const fetch_all_msgs=await axios.get(`/get-all-messages`,{headers:{'Authorization':token}})
+                display_messages(fetch_all_msgs.data.messages)
+            }
+            else{
+                const fetch_grp_msgs=await axios.get(`/get-group-messages?group=${selected_grp}`)
+                display_messages(fetch_grp_msgs.data.messages)
+            }
+            
+        }
+        catch(err){
+            console.log(err)
+        }
     }
-    document.querySelector('#selected_grp_name').value=selected_grp
+}
+
+async function editGroup(){
+    const token = localStorage.getItem('token');
+    const decoded = parseJwt(token);
+    const admin_user_id=decoded.user_id
+    const group_name=document.querySelector('.grp_name').value;
+    const id=edit_grp_btn.getAttribute("edit_group_id")
+    const selected_users=[]
+    const users=Array.from(user_list.querySelectorAll('input'))
+    users.forEach(element => {
+        if(element.getAttribute('is_checked')==='true'){
+            selected_users.push(element.getAttribute('id'))
+        }
+    });
+    const grp={
+        "name":group_name,
+        "users":selected_users,
+        "admin_id":admin_user_id
+    }
     try{
-        if(selected_grp==='Common-chats'){
-            const fetch_all_msgs=await axios.get(`/get-all-messages`,{headers:{'Authorization':token}})
-            display_messages(fetch_all_msgs.data.messages)
-        }
-        else{
-            const fetch_grp_msgs=await axios.get(`/get-group-messages?group=${selected_grp}`)
-            display_messages(fetch_grp_msgs.data.messages)
-        }
-        
+        const edit_group=await axios.put(`/edit-group/${id}`,grp)
+        alert("group updated successfully")
     }
     catch(err){
         console.log(err)

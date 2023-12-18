@@ -5,7 +5,8 @@ const GroupMember=require('../models/group_members')
 const bcrypt=require('bcrypt'); 
 const jwt=require('jsonwebtoken')
 const { Op } = require('sequelize');
-const CommonChats=require('../models/common_chats')
+const CommonChats=require('../models/common_chats');
+const Groupmember = require('../models/group_members');
 
 const getAllUsers= async (req,res,next)=>{
     try{
@@ -219,6 +220,56 @@ const getGroupMessages=async (req,res,next)=>{
     }
 }
 
+const getGroupDetails=async (req,res,next)=>{
+    const group_name=req.query.name
+    try{
+        const get_group=await Group.findOne({
+            where:{
+                name:group_name
+            }
+        })
+        const get_members=await Groupmember.findAll({
+            where:{
+                GroupId:get_group.dataValues.id
+            }
+        })
+        const user_id_list=[]
+        get_members.forEach((ele)=>{
+            user_id_list.push(ele.dataValues.userId)
+        })
+        res.status(200).json({group:get_group.dataValues,members:user_id_list})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
+const editGroup=async(req,res,next)=>{
+    const id=req.params.id
+    const grp_name=req.body.name
+    const users=req.body.users
+    const admin_id=req.body.admin_id
+    try{
+        const selected_grp=await Group.findOne({
+            where:{id:id}
+        })
+        const grp=await selected_grp.update({
+            'name':grp_name,
+            'AdminId':admin_id
+        })
+        const remove_members=await grp.addUsers(null)
+        const grp_members=await grp.addUsers(users.map((ele)=>{
+            return Number(ele)
+        }))
+        return res.status(200).json({ grp, message: "Group is succesfylly Updated" })
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
 module.exports={
     getAllUsers,
     addUser,
@@ -229,4 +280,6 @@ module.exports={
     getAllGroups,
     getGroupMessages,
     postCommonMessage,
+    getGroupDetails,
+    editGroup
 }

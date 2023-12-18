@@ -22,4 +22,8 @@ router.get('/get-group-messages',userController.getGroupMessages)
 
 router.post('/post-common-meesage',userController.postCommonMessage)
 
+router.get('/get-group-details',userController.getGroupDetails)
+
+router.put('/edit-group/:id',userController.editGroup)
+
 module.exports=router
