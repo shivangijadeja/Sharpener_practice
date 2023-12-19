@@ -1,3 +1,6 @@
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const { instrument } = require('@socket.io/admin-ui');
 const express=require('express')
 const cors=require('cors')
 const app=express()
@@ -19,8 +22,20 @@ const Groups=require('./models/group')
 const GroupMember=require('./models/group_members')
 const ChatHistory=require('./models/chatHistory')
 const CommonChats=require('./models/common_chats')
+const websocketService = require('./services/webSocket');
 
 app.use(userRoute)
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["https://admin.socket.io",],
+    credentials: true
+  }
+});
+io.on('connection', websocketService )
+
+instrument(io, { auth: false })
 
 app.get('/',(req,res)=>{
     res.sendFile("sign_up.html",{root:'views'})
@@ -40,12 +55,15 @@ Groups.belongsTo(User,{foreignKey: 'AdminId',constraints:true,onDelete:'CASCADE'
 Groups.hasMany(ChatHistory);
 ChatHistory.belongsTo(Groups);
 
-sequelize
-.sync(
-    // { force: true }
-    )
-.then(()=>{
-    app.listen(PORT,()=>{
-        console.log(`SERVER IS RUNNING ON ${PORT}`)
-    })
-})
+async function initiate() {
+    try {
+        const result = await sequelize.sync();
+        httpServer.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT} `);
+      })
+    } catch (err) {
+      console.error('Error during server initialization:', err);
+      process.exit(1); 
+    }
+  }
+initiate();

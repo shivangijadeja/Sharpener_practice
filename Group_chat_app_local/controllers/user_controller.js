@@ -211,7 +211,7 @@ const getGroupMessages=async (req,res,next)=>{
         })
         const all_chat=await chats
         console.log(all_chat)
-        res.status(200).json({messages:all_chat})
+        res.status(200).json({messages:all_chat,GroupId:selected_grp_id.dataValues.id})
 
     }
     catch(err){

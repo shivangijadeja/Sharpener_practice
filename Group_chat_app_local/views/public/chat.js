@@ -1,3 +1,17 @@
+const socket = io(window.location.origin);
+
+socket.on('new-common-message', async () => {
+    const token = localStorage.getItem('token');
+    const fetch_all_msgs=await axios.get(`/get-all-messages`,{headers:{'Authorization':token}})
+    display_messages(fetch_all_msgs.data.messages)
+})
+
+socket.on('new-group-message', async() => {
+    const selected_grp=document.querySelector('#selected_grp_name').value
+    const fetch_grp_msgs=await axios.get(`/get-group-messages?group=${selected_grp}`)
+    display_messages(fetch_grp_msgs.data.messages)
+})
+
 const send_button=document.querySelector('.send_btn')
 const msg_input=document.querySelector('#message_box')
 const msg_table=document.querySelector('.msg_table')
@@ -30,6 +44,8 @@ async function onSendMessage(e){
         }
         try{
             const post_msg=await axios.post('/post-common-meesage',chatHis)
+            socket.emit('new-common-message')
+            location.reload();
         }
         catch(err){
             alert(err)
@@ -43,6 +59,8 @@ async function onSendMessage(e){
         }
         try{
             const post_msg=await axios.post('/post-meesage',chatHis)
+            socket.emit('new-group-message')
+            document.querySelector('#message_box').value=''
         }
         catch(err){
             alert(err)
