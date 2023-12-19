@@ -26,4 +26,6 @@ router.get('/get-group-details',userController.getGroupDetails)
 
 router.put('/edit-group/:id',userController.editGroup)
 
+router.post('/post-common-image',userController.postCommonImage)
+
 module.exports=router

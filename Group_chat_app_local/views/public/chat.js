@@ -35,17 +35,28 @@ async function onSendMessage(e){
     const decoded = parseJwt(token);
     const input_val=msg_input.value
     const user_id=decoded.user_id
+    const image_url=document.querySelector('#send_file_input').value
     const selected_grp=document.querySelector('#selected_grp_name').value
     let chatHis;
     if(selected_grp==='Common-chats'){
-        chatHis={
-            "message":input_val,
-            "user_id":user_id
-        }
         try{
-            const post_msg=await axios.post('/post-common-meesage',chatHis)
+            if(image_url.length>0){
+                chatHis={
+                    "message":image_url,
+                    "user_id":user_id
+                }
+                const post_img=await axios.post('/post-common-image',chatHis)
+            }
+            else{
+                chatHis={
+                    "message":input_val,
+                    "user_id":user_id
+                }
+                const post_msg=await axios.post('/post-common-meesage',chatHis)
+            }
             socket.emit('new-common-message')
             location.reload();
+            
         }
         catch(err){
             alert(err)

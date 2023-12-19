@@ -7,6 +7,7 @@ const jwt=require('jsonwebtoken')
 const { Op } = require('sequelize');
 const CommonChats=require('../models/common_chats');
 const Groupmember = require('../models/group_members');
+const awsServices=require('../services/awsServices');
 
 const getAllUsers= async (req,res,next)=>{
     try{
@@ -270,6 +271,25 @@ const editGroup=async(req,res,next)=>{
     }
 }
 
+const postCommonImage=async(req,res,next)=>{
+    const user_id=req.body.user_id
+    const message=req.body.message
+    const filename = `chat-images/common_chat/user${user_id}/${Date.now()}_${message.originalname}`;
+    const imageUrl = await awsServices.uploadToS3(message.buffer, filename)
+    try{
+        const post_msg=await CommonChats.create({
+            userId:user_id,
+            message:imageUrl,
+            isImage: true
+        })
+        res.status(201).json({message:"Image saved successfully!!!"})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
 module.exports={
     getAllUsers,
     addUser,
@@ -281,5 +301,6 @@ module.exports={
     getGroupMessages,
     postCommonMessage,
     getGroupDetails,
-    editGroup
+    editGroup,
+    postCommonImage,
 }
