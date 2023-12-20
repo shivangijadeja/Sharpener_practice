@@ -184,9 +184,9 @@ async function display_messages(arr_of_msgs){
     arr_of_msgs.forEach(element => {
         if(element.isImage){
             const tr=document.createElement('tr')
-            var add_text=document.createTextNode(element.name)
+            var add_text=document.createTextNode(element.name.concat(' : '))
             const img=document.createElement('img')
-            img.style="height:100px; width:100px"
+            img.style="height:100px; width:100px float:right"
             img.src=element.message
             tr.appendChild(add_text)
             tr.appendChild(img)
