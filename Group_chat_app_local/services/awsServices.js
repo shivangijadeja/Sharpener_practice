@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const uploadToS3 = async (data, filename) => {
+exports.uploadToS3 = async (data, filename) => {
   try {
       const bucketName = process.env.BUCKET_NAME;
       const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -24,4 +24,3 @@ const uploadToS3 = async (data, filename) => {
       throw error;
   }
 }
-module.exports=uploadToS3

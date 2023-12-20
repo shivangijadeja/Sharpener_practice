@@ -126,6 +126,7 @@ const getAllMessages=async (req,res,next)=>{
                 message: ele.dataValues.message,
                 name: ele.dataValues.user.dataValues.user_name,
                 userId: ele.dataValues.userId,
+                isImage: ele.dataValues.isImage,
                 date_time: ele.dataValues.date_time
             }
         })
@@ -207,7 +208,8 @@ const getGroupMessages=async (req,res,next)=>{
                 message: ele.dataValues.message,
                 name: ele.dataValues.user.dataValues.user_name,
                 userId: ele.dataValues.userId,
-                date_time: ele.dataValues.date_time
+                date_time: ele.dataValues.date_time,
+                isImage:ele.dataValues.isImage
             }
         })
         const all_chat=await chats
@@ -273,7 +275,7 @@ const editGroup=async(req,res,next)=>{
 
 const postCommonImage=async(req,res,next)=>{
     const user_id=req.body.user_id
-    const message=req.body.message
+    const message=req.file
     const filename = `chat-images/common_chat/user${user_id}/${Date.now()}_${message.originalname}`;
     const imageUrl = await awsServices.uploadToS3(message.buffer, filename)
     try{
@@ -281,6 +283,31 @@ const postCommonImage=async(req,res,next)=>{
             userId:user_id,
             message:imageUrl,
             isImage: true
+        })
+        res.status(201).json({message:"Image saved successfully!!!"})
+    }
+    catch(err){
+        console.log(err)
+        res.status(404).json({message:err})
+    }
+}
+
+const postGroupImage=async (req,res,next)=>{
+    const user_id=req.body.user_id
+    const message=req.file
+    const grp_name=req.body.group_name
+    const filename = `chat-images/common_chat/group${grp_name}/user${user_id}/${Date.now()}_${message.originalname}`;
+    const imageUrl = await awsServices.uploadToS3(message.buffer, filename)
+    
+    try{
+        const selected_grp=await Group.findOne({
+            where:{name:grp_name}
+        })
+        const post_msg=await ChatHistory.create({
+            userId:user_id,
+            message:imageUrl,
+            GroupId:selected_grp.dataValues.id,
+            isImage:true
         })
         res.status(201).json({message:"Image saved successfully!!!"})
     }
@@ -303,4 +330,5 @@ module.exports={
     getGroupDetails,
     editGroup,
     postCommonImage,
+    postGroupImage,
 }

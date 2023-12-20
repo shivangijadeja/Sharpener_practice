@@ -35,17 +35,16 @@ async function onSendMessage(e){
     const decoded = parseJwt(token);
     const input_val=msg_input.value
     const user_id=decoded.user_id
-    const image_url=document.querySelector('#send_file_input').value
+    const image_url=document.querySelector('#send_file_input').files[0]
     const selected_grp=document.querySelector('#selected_grp_name').value
     let chatHis;
     if(selected_grp==='Common-chats'){
         try{
-            if(image_url.length>0){
-                chatHis={
-                    "message":image_url,
-                    "user_id":user_id
-                }
-                const post_img=await axios.post('/post-common-image',chatHis)
+            if(image_url && image_url.type.startsWith('image/')){
+                const formData=new FormData()
+                formData.append('user_id',user_id)
+                formData.append('image',image_url)
+                const post_img=await axios.post('/post-common-image',formData)
             }
             else{
                 chatHis={
@@ -63,13 +62,22 @@ async function onSendMessage(e){
         }
     }
     else{
-        chatHis={
-            "message":input_val,
-            "user_id":user_id,
-            "group_name":selected_grp
-        }
         try{
-            const post_msg=await axios.post('/post-meesage',chatHis)
+            if(image_url && image_url.type.startsWith('image/')){
+                const formData=new FormData()
+                formData.append('user_id',user_id)
+                formData.append('image',image_url)
+                formData.append("group_name",selected_grp)
+                const post_img=await axios.post('/post-group-image',formData)
+            }else{
+                chatHis={
+                    "message":input_val,
+                    "user_id":user_id,
+                    "group_name":selected_grp
+                }
+                const post_msg=await axios.post('/post-meesage',chatHis)
+            }
+            
             socket.emit('new-group-message')
             document.querySelector('#message_box').value=''
         }
@@ -174,12 +182,24 @@ async function display_messages(arr_of_msgs){
         msg_table.removeChild(msg_table.lastChild);
     }
     arr_of_msgs.forEach(element => {
-        const tr=document.createElement('tr')
-        const td=document.createElement('td')
-        var add_text=document.createTextNode(element.name.concat("  :  ",element.message))
-        td.appendChild(add_text)
-        tr.appendChild(td)
-        msg_table.appendChild(tr)
+        if(element.isImage){
+            const tr=document.createElement('tr')
+            var add_text=document.createTextNode(element.name)
+            const img=document.createElement('img')
+            img.style="height:100px; width:100px"
+            img.src=element.message
+            tr.appendChild(add_text)
+            tr.appendChild(img)
+            msg_table.appendChild(tr)
+        }
+        else{
+            const tr=document.createElement('tr')
+            const td=document.createElement('td')
+            var add_text=document.createTextNode(element.name.concat("  :  ",element.message))
+            td.appendChild(add_text)
+            tr.appendChild(td)
+            msg_table.appendChild(tr)
+        }
     });
 
 }
