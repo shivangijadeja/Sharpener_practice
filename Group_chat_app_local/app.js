@@ -23,6 +23,8 @@ const GroupMember=require('./models/group_members')
 const ChatHistory=require('./models/chatHistory')
 const CommonChats=require('./models/common_chats')
 const websocketService = require('./services/webSocket');
+const cronService = require('./services/cronService');
+cronService.job.start();
 
 app.use(userRoute)
 
