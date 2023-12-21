@@ -178,13 +178,21 @@ async function display_groups(arr_of_grps){
 }
 
 async function display_messages(arr_of_msgs){
+    const token = localStorage.getItem('token');
+    const decoded = parseJwt(token);
+    const user=decoded.user_name
     while (msg_table.firstChild) {
         msg_table.removeChild(msg_table.lastChild);
     }
     arr_of_msgs.forEach(element => {
         if(element.isImage){
             const tr=document.createElement('tr')
-            var add_text=document.createTextNode(element.name.concat(' : '))
+            if(user===element.name){
+                var add_text=document.createTextNode("You :  ")
+            }
+            else{
+                var add_text=document.createTextNode(element.name.concat(' : '))
+            }
             const img=document.createElement('img')
             img.style="height:100px; width:100px float:right"
             img.src=element.message
@@ -195,7 +203,12 @@ async function display_messages(arr_of_msgs){
         else{
             const tr=document.createElement('tr')
             const td=document.createElement('td')
-            var add_text=document.createTextNode(element.name.concat("  :  ",element.message))
+            if(user===element.name){
+                var add_text=document.createTextNode("You :  ".concat(element.message))
+            }
+            else{
+                var add_text=document.createTextNode(element.name.concat("  :  ",element.message))
+            }
             td.appendChild(add_text)
             tr.appendChild(td)
             msg_table.appendChild(tr)

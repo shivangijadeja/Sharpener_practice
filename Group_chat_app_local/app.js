@@ -40,7 +40,7 @@ io.on('connection', websocketService )
 instrument(io, { auth: false })
 
 app.get('/',(req,res)=>{
-    res.sendFile("sign_up.html",{root:'views'})
+    res.sendFile("home.html",{root:'views'})
 })
 
 app.get('/chat',(req,res)=>{
