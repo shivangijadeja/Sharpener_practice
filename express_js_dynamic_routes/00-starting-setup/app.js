@@ -13,7 +13,7 @@ app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-
+const User_model=require('./models/user')
 
 // ADDED THIS FOR BOOKING APPOITMENT APP AND EXPENSE MANAGING APP SO UNCOMMENT AT THAT TIME OF RUNNING BOTH
 // app.use(bodyParser.json({ extended: false }));
