@@ -13,13 +13,16 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  req.user.createProduct(
-    {
-      title:title,
-      price:price,
-      imageUrl:imageUrl,
-      description:description
-  }).then(result=>{
+  // req.user.createProduct(
+  //   {
+  //     title:title,
+  //     price:price,
+  //     imageUrl:imageUrl,
+  //     description:description
+  // })
+  const product=new Product(title,imageUrl,price,description)
+  product.save().then(result=>{
+    console.log("created products")
     res.redirect('/admin/products')
   }).catch(err=>console.log(err))
 };
@@ -31,9 +34,8 @@ exports.getEditProduct = (req, res, next) => {
   }
   const proId=req.params.productId;
   // Product.findOne({where:{id:proId}})
-  req.user.getProducts({where:{id:proId}})
-  .then((products)=>{
-    const product=products[0]
+  Product.findOne(proId)
+  .then((product)=>{
     if(!product){
       return res.redirect('/');
     }
@@ -49,7 +51,7 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.getDeleteProduct = (req, res, next) => {
   const proId=req.params.productId;
-  Product.destroy({where:{id:proId}})
+  Product.deleteById(proId)
   .then(()=>{
     res.redirect('/admin/products')
   }).catch((err)=>console.log(err))
@@ -61,22 +63,17 @@ exports.postEditProduct=(req,res,next)=>{
   const updatedPrice=req.body.price;
   const updatedImageUrl=req.body.imageUrl;
   const updatedDes=req.body.description;
-  Product.update(
-    {
-    title:updatedTitle,
-    price:updatedPrice,
-    imageUrl:updatedImageUrl,
-    description:updatedDes
-  },
-  {where:{id:prodId}}
-  ).then(result=>{
+  
+  const updated_product=new Product(updatedTitle,updatedImageUrl,updatedPrice,updatedDes,prodId)
+  updated_product.save().then(result=>{
+    console.log('Product Updated')
     res.redirect('/admin/products')
   }).catch(err=>console.log(err))
 }
 
 exports.getProducts = (req, res, next) => {
   // Product.findAll()
-  req.user.getProducts()
+  Product.fetchAll()
   .then((rows)=>{
     res.render('admin/products', {
       prods: rows,
