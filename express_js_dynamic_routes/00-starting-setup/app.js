@@ -13,21 +13,21 @@ app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-// const User=require('./models/user')
+const User=require('./models/user')
 
 // ADDED THIS FOR BOOKING APPOITMENT APP AND EXPENSE MANAGING APP SO UNCOMMENT AT THAT TIME OF RUNNING BOTH
 // app.use(bodyParser.json({ extended: false }));
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use((req,res,next)=>{
-//     User.findUserById("658d583081c07a6c22c1c2e6")
-//     .then(user=>{
-//         req.user=new User(user.name,user.email,user.cart,user._id);
-//         next(); 
-//     })
-//     .catch(err=>console.log(err));
-// })
+app.use((req,res,next)=>{
+    User.findById("658e757f296ae468d2a051e2")
+    .then(user=>{
+        req.user=user;
+        next(); 
+    })
+    .catch(err=>console.log(err));
+})
 
 // const Product=require('./models/product')
 // const Cart=require('./models/cart')
@@ -39,6 +39,18 @@ app.use(shopRoutes);
 mongoose
 .connect('mongodb+srv://shivangi:shivangi@cluster0.zjwh2kd.mongodb.net/shop?retryWrites=true&w=majority')
 .then(result=>{
+    User.findOne().then(user=>{
+        if(!user){
+            const new_user=new User({
+                name:'Shivangi',
+                email:'shivangi@gmail.com',
+                cart:{
+                    items:[]
+                }
+            })
+            new_user.save()
+        }
+    })
     app.listen(3000)
 })
 .catch(err=>{

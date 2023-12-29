@@ -24,7 +24,8 @@ exports.postAddProduct = (req, res, next) => {
     title:title,
     imageUrl:imageUrl,
     price:price,
-    description:description
+    description:description,
+    userId:req.user
   })
   product.save().then(result=>{
     console.log("created products")
@@ -85,6 +86,7 @@ exports.postEditProduct=(req,res,next)=>{
 exports.getProducts = (req, res, next) => {
   // Product.findAll()
   Product.find()
+  // .populate('userId')
   .then((rows)=>{
     res.render('admin/products', {
       prods: rows,
